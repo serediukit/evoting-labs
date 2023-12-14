@@ -1,7 +1,5 @@
 import java.security.*;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import CantVoteException.*;
 
@@ -41,39 +39,41 @@ class CentralElectionCommission {
         }
 
         // Election phase: Central Election Commission counts and announces results
-        int candidateVotes = 0;
+        List<Integer> candidateVotes = Collections.nCopies(candidatesCount, 0);
         for (Voter voter : voters.values()) {
             String decryptedVote = decryptVote(voter.getEncryptedVote(), voter.getKeyPair().getPrivate());
-            if (isValidVote(decryptedVote)) {
-                candidateVotes++;
+            if (isValidVote(decryptedVote) && decryptedVote != null) {
+                int index = Integer.parseInt(decryptedVote);
+                candidateVotes.set(index, candidateVotes.get(index) + 1);
             } else {
                 System.out.println("Invalid vote detected for voter: " + voter.getName());
             }
         }
 
         System.out.println("Election Results:");
-        System.out.println("Candidate: " + candidates.values().toArray()[0] + ", Votes: " + candidateVotes);
+        for (int i = 0; i < candidatesCount; i++) {
+            System.out.println("Candidate: " + candidates.get(i) + "    ---->    votes: " + candidateVotes.get(i));
+        }
     }
 
-    public void makeVote(Voter voter, int vote) throws
-            CantVoteException,
-            CandidateDoesNotExist,
-            VoterDoesNotExist,
-            OtherVoterException,
-            VoterHasAlreadyVotedException {
-        if (!voters.containsValue(voter)) {
-            throw new VoterDoesNotExist();
+    public void makeVote(Voter voter, int vote) {
+        try {
+            if (!voters.containsValue(voter)) {
+                throw new VoterDoesNotExist();
+            }
+            if (!candidates.containsKey(vote)) {
+                throw new CandidateDoesNotExist();
+            }
+            if (!voter.canVote()) {
+                throw new CantVoteException();
+            }
+            if (!voters.get(voter.getId()).equals(voter)) {
+                throw new OtherVoterException();
+            }
+            voter.makeVote(vote);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        if (!candidates.containsKey(vote)) {
-            throw new CandidateDoesNotExist();
-        }
-        if (!voter.canVote()) {
-            throw new CantVoteException();
-        }
-        if (!voters.get(voter.getId()).equals(voter)) {
-            throw new OtherVoterException();
-        }
-        voter.makeVote(vote);
     }
 
     private String encryptVote(String vote, PublicKey publicKey) {
@@ -83,11 +83,7 @@ class CentralElectionCommission {
 
             byte[] encryptedBytes = cipher.doFinal(vote.getBytes());
             return Base64.getEncoder().encodeToString(encryptedBytes);
-        } catch (NoSuchAlgorithmException
-                 | NoSuchPaddingException
-                 | InvalidKeyException
-                 | IllegalBlockSizeException
-                 | BadPaddingException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
@@ -101,11 +97,7 @@ class CentralElectionCommission {
             byte[] encryptedBytes = Base64.getDecoder().decode(encryptedVote);
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
             return new String(decryptedBytes);
-        } catch (NoSuchAlgorithmException
-                 | NoSuchPaddingException
-                 | InvalidKeyException
-                 | IllegalBlockSizeException
-                 | BadPaddingException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;

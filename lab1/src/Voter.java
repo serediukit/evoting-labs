@@ -82,6 +82,8 @@ class Voter {
     }
 
     public int getEncryptedGammaVote() {
+        if (vote == null)
+            return -1;
         if (vote.length == 0)
             return -1;
         byte[] temp = new byte[vote.length];
