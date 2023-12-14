@@ -1,7 +1,7 @@
 package CantVoteException;
 
 public class VoterHasAlreadyVotedException extends Exception{
-    public VoterHasAlreadyVotedException() {
-        super("This voter has already voted");
+    public VoterHasAlreadyVotedException(String name) {
+        super("The voter " + name + " has already voted");
     }
 }

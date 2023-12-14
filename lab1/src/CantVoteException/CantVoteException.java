@@ -1,7 +1,7 @@
 package CantVoteException;
 
 public class CantVoteException extends Exception {
-    public CantVoteException() {
-        super("The voter can't vote");
+    public CantVoteException(String name) {
+        super("The voter " + name + " can't vote");
     }
 }

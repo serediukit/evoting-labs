@@ -68,7 +68,7 @@ class Voter {
             }
             hasVoted = true;
         } else {
-            throw new VoterHasAlreadyVotedException();
+            throw new VoterHasAlreadyVotedException(this.name);
         }
     }
 
@@ -81,7 +81,7 @@ class Voter {
         return res;
     }
 
-    public int getEncryptedGammaVote() {
+    public int getDecryptedGammaVote() {
         if (vote == null)
             return -1;
         if (vote.length == 0)
