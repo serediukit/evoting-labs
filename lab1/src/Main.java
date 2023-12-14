@@ -40,10 +40,13 @@ public class Main {
             CEC.addVoter(voter5);
 
             CEC.makeVote(voter1, 0);
+            CEC.makeVote(voter1, 1);
             CEC.makeVote(voter2, 0);
             CEC.makeVote(voter3, 1);
             CEC.makeVote(voter4, 1);
             CEC.makeVote(voter5, 0);
+
+            System.out.println(voter4.getDecryptedGammaVote());
 
             // Conduct the election
             CEC.conductElection();

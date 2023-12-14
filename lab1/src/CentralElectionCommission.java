@@ -48,6 +48,7 @@ class CentralElectionCommission {
                 String[] decryptedArray = decryptedVote.split(" ");
                 int index = Integer.parseInt(decryptedArray[2]);
                 candidateVotes[index]++;
+                voter.makeCounted();
             } else if (voter.getDecryptedGammaVote() == -1 && voter.canVote()) {
                 System.out.println("The voter " + voter.getName() + " has not voted");
             } else {

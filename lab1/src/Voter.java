@@ -7,6 +7,7 @@ import java.security.interfaces.RSAPublicKey;
 class Voter {
     private boolean canVote;
     private boolean hasVoted;
+    private boolean hasCounted;
     private int id;
     private String name;
     private KeyPair keyPair;
@@ -19,6 +20,7 @@ class Voter {
         this.keyPair = keyPair;
         canVote = true;
         hasVoted = false;
+        hasCounted = false;
         key = getKeyFromRSAKey();
     }
 
@@ -27,6 +29,7 @@ class Voter {
         this.keyPair = keyPair;
         this.canVote = canVote;
         hasVoted = false;
+        hasCounted = false;
         key = getKeyFromRSAKey();
     }
 
@@ -93,5 +96,13 @@ class Voter {
         }
         String res = new String(temp);
         return Integer.parseInt(res);
+    }
+
+    public void makeCounted() {
+        hasCounted = true;
+    }
+
+    public boolean checkIfCounted() {
+        return hasCounted;
     }
 }
