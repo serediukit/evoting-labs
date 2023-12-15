@@ -8,8 +8,8 @@ import javax.crypto.*;
 class CentralElectionCommission {
     private Integer candidatesCount = 0;
     private Integer votersCount = 0;
-    private Map<Integer, Candidate> candidates;
-    private Map<Integer, Voter> voters;
+    private final Map<Integer, Candidate> candidates;
+    private final Map<Integer, Voter> voters;
 
     public CentralElectionCommission() {
         candidates = new HashMap<>();
@@ -77,6 +77,7 @@ class CentralElectionCommission {
                 throw new OtherVoterException(voter.getName());
             }
             voter.makeVote(vote);
+            candidates.get(vote).votesInc();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -105,5 +106,25 @@ class CentralElectionCommission {
             return new String(decryptedBytes);
         } catch (Exception ignored) { }
         return null;
+    }
+
+    public void printVotingStatus() {
+        System.out.println("+------------------+--------------+");
+        System.out.println("|        CANDIDATES STATUS        |");
+        System.out.println("+------------------+--------------+");
+        System.out.println("|    CANDIDATES    |     VOTES    |");
+        System.out.println("+------------------+--------------+");
+        for (Candidate candidate : candidates.values()) {
+            System.out.printf("| %16s | %12d |\n", candidate.getName(), candidate.getVotesCount());
+        }
+        System.out.println("+------------------+--------------+");
+        System.out.println("|          VOTERS STATUS          |");
+        System.out.println("+------------------+--------------+");
+        System.out.println("|      VOTERS      |    hasVOTE   |");
+        System.out.println("+------------------+--------------+");
+        for (Voter voter : voters.values()) {
+            System.out.printf("| %16s | %12b |\n", voter.getName(), voter.hasVoted());
+        }
+        System.out.println("+------------------+--------------+");
     }
 }

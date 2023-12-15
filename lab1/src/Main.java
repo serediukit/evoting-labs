@@ -1,10 +1,5 @@
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,6 +12,7 @@ public class Main {
             KeyPair voterKeyPair3 = keyPairGenerator.generateKeyPair();
             KeyPair voterKeyPair4 = keyPairGenerator.generateKeyPair();
             KeyPair voterKeyPair5 = keyPairGenerator.generateKeyPair();
+            KeyPair voterKeyPair6 = keyPairGenerator.generateKeyPair();
 
             // Create candidates
             Candidate candidate1 = new Candidate("Candidate A");
@@ -28,6 +24,7 @@ public class Main {
             Voter voter3 = new Voter("Voter 3", voterKeyPair3);
             Voter voter4 = new Voter("Voter 4", voterKeyPair4);
             Voter voter5 = new Voter("Voter 5", voterKeyPair5);
+            Voter voter6 = new Voter("Voter 6", voterKeyPair6, false);
 
             // Create and configure Central Election Commission
             CentralElectionCommission CEC = new CentralElectionCommission();
@@ -38,18 +35,25 @@ public class Main {
             CEC.addVoter(voter3);
             CEC.addVoter(voter4);
             CEC.addVoter(voter5);
+            CEC.addVoter(voter6);
 
             CEC.makeVote(voter1, 0);
-            CEC.makeVote(voter1, 1);
             CEC.makeVote(voter2, 0);
-            CEC.makeVote(voter3, 1);
+            CEC.makeVote(voter3, 0);
+            CEC.makeVote(voter3, 0);
+            CEC.makeVote(voter3, 0);
+            CEC.makeVote(voter3, 0);
+            CEC.printVotingStatus();
             CEC.makeVote(voter4, 1);
             CEC.makeVote(voter5, 0);
-
-            System.out.println(voter4.getDecryptedGammaVote());
+            CEC.makeVote(voter6, 1);
 
             // Conduct the election
             CEC.conductElection();
+
+            System.out.println("Checking if voter has been counted: " + voter2.checkIfCounted());
+            System.out.println("Checking if voter has been counted: " + voter3.checkIfCounted());
+            System.out.println("Checking if voter has been counted: " + voter4.checkIfCounted());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

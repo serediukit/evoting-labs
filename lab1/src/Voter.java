@@ -1,17 +1,16 @@
 import CantVoteException.VoterHasAlreadyVotedException;
 
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPublicKey;
 
 class Voter {
-    private boolean canVote;
+    private final boolean canVote;
     private boolean hasVoted;
     private boolean hasCounted;
     private int id;
-    private String name;
-    private KeyPair keyPair;
-    private byte[] key;
+    private final String name;
+    private final KeyPair keyPair;
+    private final byte[] key;
     private byte[] vote;
     private String encryptedVote;
 
@@ -55,6 +54,10 @@ class Voter {
 
     public void setEncryptedVote(String encryptedVote) {
         this.encryptedVote = encryptedVote;
+    }
+
+    public boolean hasVoted() {
+        return hasVoted;
     }
 
     public boolean canVote() {
