@@ -44,11 +44,13 @@ public class Main {
             voter2.generateBallots(countOfExamples, CEC.getCandidatesCount());
             voter2.setSignedBallots(CEC.getSignedBallot(voter2));
             voter3.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter3.setSignedBallots(CEC.getSignedBallot(voter3));
+            voter3.setSignedBallots(CEC.getSignedBallot(voter1));
             voter4.generateBallots(countOfExamples, CEC.getCandidatesCount());
             voter4.setSignedBallots(CEC.getSignedBallot(voter4));
             voter5.generateBallots(countOfExamples, CEC.getCandidatesCount());
             voter5.setSignedBallots(CEC.getSignedBallot(voter5));
+            voter6.generateBallots(countOfExamples, CEC.getCandidatesCount());
+            voter6.setSignedBallots(CEC.getSignedBallot(voter6));
 
             CEC.makeVote(voter1, 0);
             CEC.makeVote(voter2, 0);
@@ -63,9 +65,9 @@ public class Main {
             // Conduct the election
             CEC.conductElection();
 
-            System.out.println("Checking if voter has been counted: " + voter2.checkIfCounted());
-            System.out.println("Checking if voter has been counted: " + voter3.checkIfCounted());
-            System.out.println("Checking if voter has been counted: " + voter4.checkIfCounted());
+            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
+            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
+            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

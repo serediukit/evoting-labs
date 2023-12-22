@@ -32,7 +32,7 @@ class CentralElectionCommission {
         // Election phase: Voters cast their votes
         for (Voter voter : voters.values()) {
             if (voter.getVote() != -1) {
-                System.out.println("Voter: " + voter.getName() + " is counting...");
+//                System.out.println("Voter: " + voter.getName() + " is counting...");
                 String vote = "Vote for " + voter.getVote(); // Assume all votes are for the first candidate
                 String encryptedVote = Encryptor.encrypt(vote, voter.getKeyPair().getPublic());
                 voter.setEncryptedVote(encryptedVote);
@@ -45,19 +45,19 @@ class CentralElectionCommission {
             candidateVotes[i] = 0;
         for (Voter voter : voters.values()) {
             String decryptedVote = Encryptor.decrypt(voter.getEncryptedVote(), voter.getKeyPair().getPrivate());
+            System.out.println(voter.getName() + "'s vote - " + decryptedVote);
             if (decryptedVote != null) {
                 String[] decryptedArray = decryptedVote.split(" ");
                 int index = Integer.parseInt(decryptedArray[2]);
                 candidateVotes[index]++;
                 voter.makeCounted();
             } else if (voter.getVote() == -1 && voter.canVote()) {
-                System.out.println("The voter " + voter.getName() + " has not voted\n");
+//                System.out.println("The voter " + voter.getName() + " has not voted\n");
             } else {
-                System.out.println("Invalid vote detected for voter: " + voter.getName() + "\n");
+//                System.out.println("Invalid vote detected for voter: " + voter.getName() + "\n");
             }
         }
 
-        System.out.println("\n\n");
         System.out.println("+------------------+--------------+");
         System.out.println("|        ELECTION  RESULTS        |");
         System.out.println("+------------------+--------------+");

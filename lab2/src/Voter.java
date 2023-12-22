@@ -1,3 +1,4 @@
+import CantVoteException.OtherVoterException;
 import CantVoteException.VoteIsNotValidException;
 import CantVoteException.VoterHasAlreadyVotedException;
 
@@ -71,8 +72,11 @@ class Voter {
         return canVote;
     }
 
-    public void makeVote(int vote) throws VoterHasAlreadyVotedException, VoteIsNotValidException {
+    public void makeVote(int vote) throws VoterHasAlreadyVotedException, VoteIsNotValidException, OtherVoterException {
         if (!hasVoted && signedBallots != null) {
+            if (signedBallots.get(vote).getDecryptedData(keyPair.getPrivate()) == null) {
+                throw new OtherVoterException(name);
+            }
             String[] data = signedBallots.get(vote).getDecryptedData(keyPair.getPrivate()).split(" ");
             if (Integer.parseInt(data[0]) == id && Integer.parseInt(data[1]) == vote) {
                 this.vote = Integer.parseInt(data[1]);
