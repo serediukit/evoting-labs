@@ -39,8 +39,16 @@ public class Main {
             CEC.addVoter(voter5);
             CEC.addVoter(voter6);
 
-            ArrayList<ArrayList<Ballot>> voter1ExamplesBallots = generateBallots(voter1, countOfExamples, 2);
-            ArrayList<Ballot> voter1SignedBallots = CEC.getSignedBallot(voter1BallotsList);
+            voter1.generateBallots(countOfExamples, CEC.getCandidatesCount());
+            voter1.setSignedBallots(CEC.getSignedBallot(voter1));
+            voter2.generateBallots(countOfExamples, CEC.getCandidatesCount());
+            voter2.setSignedBallots(CEC.getSignedBallot(voter2));
+            voter3.generateBallots(countOfExamples, CEC.getCandidatesCount());
+            voter3.setSignedBallots(CEC.getSignedBallot(voter3));
+            voter4.generateBallots(countOfExamples, CEC.getCandidatesCount());
+            voter4.setSignedBallots(CEC.getSignedBallot(voter4));
+            voter5.generateBallots(countOfExamples, CEC.getCandidatesCount());
+            voter5.setSignedBallots(CEC.getSignedBallot(voter5));
 
             CEC.makeVote(voter1, 0);
             CEC.makeVote(voter2, 0);
@@ -48,7 +56,6 @@ public class Main {
             CEC.makeVote(voter3, 0);
             CEC.makeVote(voter3, 0);
             CEC.makeVote(voter3, 0);
-            CEC.printVotingStatus();
             CEC.makeVote(voter4, 1);
             CEC.makeVote(voter5, 0);
             CEC.makeVote(voter6, 1);
@@ -65,14 +72,5 @@ public class Main {
         }
     }
 
-    private static ArrayList<ArrayList<Ballot>> generateBallots(Voter voter, int examplesCount, int candidatesCount) {
-        ArrayList<ArrayList<Ballot>> res = new ArrayList<>();
-        for (int i = 0; i < examplesCount; i++) {
-            ArrayList<Ballot> temp = new ArrayList<>();
-            for (int j = 0; j < candidatesCount; j++)
-                temp.add(new Ballot(voter, i, j));
-            res.add(temp);
-        }
-        return res;
-    }
+
 }

@@ -3,7 +3,6 @@ import java.util.*;
 
 import CantVoteException.*;
 
-import javax.crypto.*;
 
 class CentralElectionCommission {
     private Integer candidatesCount = 0;
@@ -32,10 +31,10 @@ class CentralElectionCommission {
     public void conductElection() {
         // Election phase: Voters cast their votes
         for (Voter voter : voters.values()) {
-            if (voter.getDecryptedGammaVote() != -1) {
+            if (voter.getVote() != -1) {
                 System.out.println("Voter: " + voter.getName() + " is counting...");
-                String vote = "Vote for " + voter.getDecryptedGammaVote(); // Assume all votes are for the first candidate
-                String encryptedVote = encryptVote(vote, voter.getKeyPair().getPublic());
+                String vote = "Vote for " + voter.getVote(); // Assume all votes are for the first candidate
+                String encryptedVote = Encryptor.encrypt(vote, voter.getKeyPair().getPublic());
                 voter.setEncryptedVote(encryptedVote);
             }
         }
@@ -45,23 +44,29 @@ class CentralElectionCommission {
         for (int i = 0; i < candidatesCount; i++)
             candidateVotes[i] = 0;
         for (Voter voter : voters.values()) {
-            String decryptedVote = decryptVote(voter.getEncryptedVote(), voter.getKeyPair().getPrivate());
+            String decryptedVote = Encryptor.decrypt(voter.getEncryptedVote(), voter.getKeyPair().getPrivate());
             if (decryptedVote != null) {
                 String[] decryptedArray = decryptedVote.split(" ");
                 int index = Integer.parseInt(decryptedArray[2]);
                 candidateVotes[index]++;
                 voter.makeCounted();
-            } else if (voter.getDecryptedGammaVote() == -1 && voter.canVote()) {
-                System.out.println("The voter " + voter.getName() + " has not voted");
+            } else if (voter.getVote() == -1 && voter.canVote()) {
+                System.out.println("The voter " + voter.getName() + " has not voted\n");
             } else {
-                System.out.println("Invalid vote detected for voter: " + voter.getName());
+                System.out.println("Invalid vote detected for voter: " + voter.getName() + "\n");
             }
         }
 
-        System.out.println("\n\nElection Results:");
-        for (int i = 0; i < candidatesCount; i++) {
-            System.out.println("Candidate: " + candidates.get(i).getName() + " -> votes: " + candidateVotes[i]);
+        System.out.println("\n\n");
+        System.out.println("+------------------+--------------+");
+        System.out.println("|        ELECTION  RESULTS        |");
+        System.out.println("+------------------+--------------+");
+        System.out.println("|    CANDIDATES    |     VOTES    |");
+        System.out.println("+------------------+--------------+");
+        for (Candidate candidate : candidates.values()) {
+            System.out.printf("| %16s | %12d |\n", candidate.getName(), candidate.getVotesCount());
         }
+        System.out.println("+------------------+--------------+");
     }
 
     public void makeVote(Voter voter, int vote) {
@@ -78,29 +83,49 @@ class CentralElectionCommission {
             if (!voters.get(voter.getId()).equals(voter)) {
                 throw new OtherVoterException(voter.getName());
             }
+            if (!voter.hasSignedBallots()) {
+                throw new SignedBallotsDoNotExistsException(voter.getName());
+            }
             voter.makeVote(vote);
             candidates.get(vote).votesInc();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + "\n");
         }
     }
 
-    private String encryptVote(String vote, PublicKey publicKey) {
-        return Encryptor.encrypt(vote, publicKey);
-    }
-
-    private String decryptVote(String encryptedVote, PrivateKey privateKey) {
-        return Encryptor.decrypt(encryptedVote, privateKey);
-    }
-
-    public ArrayList<Ballot> getSignedBallot(ArrayList<ArrayList<Ballot>> voterExamples) {
+    public ArrayList<Ballot> getSignedBallot(Voter voter) {
+        ArrayList<ArrayList<Ballot>> voterExamples = voter.getBallotsExamples();
         Random r = new Random();
-        int randIndex =  r.nextInt(10);
-        for (int i = 0; i < voterExamples.size(); i++) {
-            if (i != randIndex) {
-
+        int randIndex =  r.nextInt(voterExamples.size());
+        try {
+            if (voterExamples.isEmpty())
+                throw new ExamplesDoesNotExistException(voter.getName());
+            for (int i = 0; i < voterExamples.size(); i++) {
+                if (i != randIndex) {
+                    for (int j = 0; j < voterExamples.get(i).size(); j++) {
+                        String decryptedData = voterExamples.get(i).get(j).getDecryptedData(voter.getKeyPair().getPrivate());
+                        String[] data = decryptedData.split(" ");
+                        if (Integer.parseInt(data[0]) != voter.getId() || Integer.parseInt(data[1]) != j) {
+                            throw new BallotIsNotValidException(decryptedData);
+                        }
+                    }
+                }
             }
+            ArrayList<Ballot> signedBallots = new ArrayList<>();
+            for (int i = 0; i < voterExamples.get(randIndex).size(); i++) {
+                Ballot signedBallot = voterExamples.get(randIndex).get(i);
+                signedBallot.makeSigned();
+                signedBallots.add(signedBallot);
+            }
+            return signedBallots;
+        } catch (BallotIsNotValidException | ExamplesDoesNotExistException e) {
+            System.out.println(e.getMessage());
+            return null;
         }
+    }
+
+    public int getCandidatesCount() {
+        return candidatesCount;
     }
 
     public void printVotingStatus() {

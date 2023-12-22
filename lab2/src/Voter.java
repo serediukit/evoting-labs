@@ -1,7 +1,9 @@
+import CantVoteException.VoteIsNotValidException;
 import CantVoteException.VoterHasAlreadyVotedException;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAPublicKey;
+import java.util.ArrayList;
 
 class Voter {
     private final boolean canVote;
@@ -10,9 +12,10 @@ class Voter {
     private int id;
     private final String name;
     private final KeyPair keyPair;
-    private final byte[] key;
-    private byte[] vote;
+    private int vote;
     private String encryptedVote;
+    private ArrayList<ArrayList<Ballot>> ballotsExamples;
+    private ArrayList<Ballot> signedBallots;
 
     public Voter(String name, KeyPair keyPair) {
         this.name = name;
@@ -20,7 +23,7 @@ class Voter {
         canVote = true;
         hasVoted = false;
         hasCounted = false;
-        key = getKeyFromRSAKey();
+        vote = -1;
     }
 
     public Voter(String name, KeyPair keyPair, boolean canVote) {
@@ -29,7 +32,7 @@ class Voter {
         this.canVote = canVote;
         hasVoted = false;
         hasCounted = false;
-        key = getKeyFromRSAKey();
+        vote = -1;
     }
 
     public int getId() {
@@ -48,6 +51,10 @@ class Voter {
         return keyPair;
     }
 
+    public int getVote() {
+        return vote;
+    }
+
     public String getEncryptedVote() {
         return encryptedVote;
     }
@@ -64,41 +71,18 @@ class Voter {
         return canVote;
     }
 
-    public void makeVote(int vote) throws VoterHasAlreadyVotedException {
-        if (!hasVoted) {
-            String voteString = Integer.toBinaryString(vote);
-            this.vote = voteString.getBytes();
-            for (int i = 0; i < this.vote.length; i++) {
-                this.vote[i] -= 48;
-                this.vote[i] = (byte) (this.vote[i] ^ key[i % key.length]);
+    public void makeVote(int vote) throws VoterHasAlreadyVotedException, VoteIsNotValidException {
+        if (!hasVoted && signedBallots != null) {
+            String[] data = signedBallots.get(vote).getDecryptedData(keyPair.getPrivate()).split(" ");
+            if (Integer.parseInt(data[0]) == id && Integer.parseInt(data[1]) == vote) {
+                this.vote = Integer.parseInt(data[1]);
+                hasVoted = true;
+            } else {
+                throw new VoteIsNotValidException(name);
             }
-            hasVoted = true;
         } else {
             throw new VoterHasAlreadyVotedException(this.name);
         }
-    }
-
-    private byte[] getKeyFromRSAKey() {
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        byte[] res = publicKey.getModulus().toByteArray();
-        for (int i = 0; i < res.length; i++) {
-            res[i] %= 2;
-        }
-        return res;
-    }
-
-    public int getDecryptedGammaVote() {
-        if (vote == null)
-            return -1;
-        if (vote.length == 0)
-            return -1;
-        byte[] temp = new byte[vote.length];
-        for (int i = 0; i < vote.length; i++) {
-            temp[i] = (byte) (vote[i] ^ key[i % key.length]);
-            temp[i] += 48;
-        }
-        String res = new String(temp);
-        return Integer.parseInt(res);
     }
 
     public void makeCounted() {
@@ -107,5 +91,28 @@ class Voter {
 
     public boolean checkIfCounted() {
         return hasCounted;
+    }
+
+    public void generateBallots(int examplesCount, int candidatesCount) {
+        ballotsExamples = new ArrayList<>();
+        for (int i = 0; i < examplesCount; i++) {
+            ArrayList<Ballot> temp = new ArrayList<>();
+            for (int j = 0; j < candidatesCount; j++)
+                temp.add(new Ballot(this, j));
+            ballotsExamples.add(temp);
+        }
+    }
+
+    public ArrayList<ArrayList<Ballot>> getBallotsExamples() {
+        return ballotsExamples;
+    }
+
+    public void setSignedBallots(ArrayList<Ballot> signedBallots) {
+        this.signedBallots = signedBallots;
+    }
+
+    public boolean hasSignedBallots() {
+        if (signedBallots == null) return false;
+        return !signedBallots.isEmpty();
     }
 }
