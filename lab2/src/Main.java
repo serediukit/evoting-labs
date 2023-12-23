@@ -2,6 +2,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.ArrayList;
 
+import static java.util.Arrays.asList;
+
 public class Main {
     public static void main(String[] args) {
         final int countOfExamples = 10;
@@ -28,29 +30,23 @@ public class Main {
             Voter voter5 = new Voter("Voter 5", voterKeyPair5);
             Voter voter6 = new Voter("Voter 6", voterKeyPair6, false);
 
+            ArrayList<Candidate> candidates = new ArrayList<>(asList(candidate1, candidate2));
+            ArrayList<Voter> voters = new ArrayList<>(asList(voter1, voter2, voter3, voter4, voter5, voter6));
+
             // Create and configure Central Election Commission
             CentralElectionCommission CEC = new CentralElectionCommission(keyPairGenerator.generateKeyPair());
-            CEC.addCandidate(candidate1);
-            CEC.addCandidate(candidate2);
-            CEC.addVoter(voter1);
-            CEC.addVoter(voter2);
-            CEC.addVoter(voter3);
-            CEC.addVoter(voter4);
-            CEC.addVoter(voter5);
-            CEC.addVoter(voter6);
 
-            voter1.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter1.setSignedBallots(CEC.getSignedBallot(voter1));
-            voter2.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter2.setSignedBallots(CEC.getSignedBallot(voter2));
-            voter3.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter3.setSignedBallots(CEC.getSignedBallot(voter1));
-            voter4.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter4.setSignedBallots(CEC.getSignedBallot(voter4));
-            voter5.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter5.setSignedBallots(CEC.getSignedBallot(voter5));
-            voter6.generateBallots(countOfExamples, CEC.getCandidatesCount());
-            voter6.setSignedBallots(CEC.getSignedBallot(voter6));
+            for (Candidate candidate : candidates)
+                CEC.addCandidate(candidate);
+
+            for (Voter voter : voters)
+                CEC.addVoter(voter);
+
+            for (Voter voter : voters) {
+                voter.generateBallots(countOfExamples, candidates.size());
+                voter.setSignedBallots(CEC.getSignedBallot(voter));
+            }
+//            voter3.setSignedBallots(CEC.getSignedBallot(voter1));
 
             CEC.makeVote(voter1, 0);
             CEC.makeVote(voter2, 0);
