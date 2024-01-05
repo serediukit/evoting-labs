@@ -9,19 +9,23 @@ public class Ballot {
     private boolean isSigned = false;
 
     public Ballot(Voter voter, int vote) {
-        data = encryptData(voter, voter.getId() + " " + vote);
+        data = voter.getId() + " " + vote;
     }
 
-    private String encryptData(Voter voter, String data) {
-        return Encryptor.encrypt(data, voter.getKeyPair().getPublic());
+    public void encrypt(PublicKey key) {
+        data = Encryptor.encrypt(data, key);
+    }
+
+    public void decrypt(PrivateKey key) {
+        data = Encryptor.decrypt(data, key);
+    }
+
+    public String getData() {
+        return data;
     }
 
     public String getDecryptedData(PrivateKey key) {
         return Encryptor.decrypt(data, key);
-    }
-
-    public void resignBallot(Voter voter, PublicKey key) {
-        data = Encryptor.encrypt(getDecryptedData(voter.getKeyPair().getPrivate()), key);
     }
 
     public boolean isSigned() {

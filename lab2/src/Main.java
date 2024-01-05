@@ -47,33 +47,34 @@ public class Main {
             for (Voter voter : voters) {
                 voter.generateBallots(countOfExamples, candidates.size());
                 voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate()));
+                voter.makeSignedBallotsDecrypted();
             }
 //            voter3.setSignedBallots(CEC.getSignedBallot(voter1));
 
             Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(0);
-            voter1Ballot.resignBallot(voter1, CECKeyPair.getPublic());
+            voter1Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter1, voter1Ballot);
 
             Ballot voter2Ballot = voter2.chooseSignedBallotWithCandidate(0);
-            voter2Ballot.resignBallot(voter2, CECKeyPair.getPublic());
+            voter2Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter2, voter2Ballot);
 
             Ballot voter3Ballot = voter3.chooseSignedBallotWithCandidate(0);
-            voter3Ballot.resignBallot(voter3, CECKeyPair.getPublic());
+            voter3Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter3, voter3Ballot);
             CEC.sendBallot(voter3, voter3Ballot);
             CEC.sendBallot(voter3, voter3Ballot);
 
             Ballot voter4Ballot = voter4.chooseSignedBallotWithCandidate(1);
-            voter4Ballot.resignBallot(voter4, CECKeyPair.getPublic());
+            voter4Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter4, voter4Ballot);
 
             Ballot voter5Ballot = voter5.chooseSignedBallotWithCandidate(0);
-            voter5Ballot.resignBallot(voter5, CECKeyPair.getPublic());
+            voter5Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter5, voter5Ballot);
 
             Ballot voter6Ballot = voter6.chooseSignedBallotWithCandidate(0);
-            voter6Ballot.resignBallot(voter6, CECKeyPair.getPublic());
+            voter6Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter6, voter6Ballot);
 
             // Conduct the election

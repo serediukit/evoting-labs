@@ -74,8 +74,11 @@ class Voter {
         ballotsExamples = new ArrayList<>();
         for (int i = 0; i < examplesCount; i++) {
             ArrayList<Ballot> temp = new ArrayList<>();
-            for (int j = 0; j < candidatesCount; j++)
-                temp.add(new Ballot(this, j));
+            for (int j = 0; j < candidatesCount; j++) {
+                Ballot tempBallot = new Ballot(this, j);
+                tempBallot.encrypt(keyPair.getPublic());
+                temp.add(tempBallot);
+            }
             ballotsExamples.add(temp);
         }
     }
@@ -93,10 +96,16 @@ class Voter {
         return !signedBallots.isEmpty();
     }
 
+    public void makeSignedBallotsDecrypted() {
+        for (Ballot ballot : signedBallots) {
+            ballot.decrypt(keyPair.getPrivate());
+        }
+    }
+
     public Ballot chooseSignedBallotWithCandidate(int candidate) {
         Ballot res = signedBallots.get(candidate);
         try {
-            if (Integer.parseInt(res.getDecryptedData(keyPair.getPrivate()).split(" ")[0]) != id)
+            if (Integer.parseInt(res.getData().split(" ")[0]) != id)
                 throw new SignedBallotsDoNotExistsException(name);
             return res;
         } catch (SignedBallotsDoNotExistsException e) {
