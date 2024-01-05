@@ -9,6 +9,10 @@ public class Ballot {
         data = voter.getId() + "" + vote;
     }
 
+    public Ballot(String data) {
+        this.data = data;
+    }
+
     public void encrypt(PublicKey key) {
         data = Encryptor.encrypt(data, key);
     }

@@ -35,11 +35,11 @@ class CentralElectionCommission {
     }
 
     public void conductElection() {
-        for (Ballot ballot : ballots.values()) {
-            String decryptedData = ballot.getDecryptedData(keys.getPrivate());
-            String[] data = decryptedData.split(" ");
-            int voterId = Integer.parseInt(data[0]);
-            int vote = Integer.parseInt(data[1]);
+        for (Integer voterId : ballots.keySet()) {
+            String signedData = ballots.get(voterId).getData();
+            BigInteger s = Encryptor.getS(new BigInteger(signedData), voters.get(voterId).getR(), keys.getPublic());
+            BigInteger m = Encryptor.getM(s, keys.getPublic());
+            int vote = m.mod(BigInteger.TEN).intValue();
 //            if (voterId == 3)
 //                candidates.get(0).votesInc();
 //            else
@@ -54,17 +54,20 @@ class CentralElectionCommission {
     public void sendBallot(Voter voter, Ballot ballot) {
         try {
             if (ballot != null) {
-                String signedData = ballot.getData();
+                Ballot decryptedBallot = new Ballot(Encryptor.decrypt(ballot.getData(), keys.getPrivate()));
+                String signedData = decryptedBallot.getData();
                 BigInteger s = Encryptor.getS(new BigInteger(signedData), voter.getR(), keys.getPublic());
                 BigInteger m = Encryptor.getM(s, keys.getPublic());
                 int voterId = m.divide(BigInteger.TEN).intValue();
                 int vote = m.mod(BigInteger.TEN).intValue();
                 if (!voters.containsKey(voterId))
-                    throw new BallotIsNotSignedException();
+                    throw new Exception("Incorrect ballot");
                 if (voter.getId() != voterId)
                     throw new OtherVoterException(voter.getName());
+                if (!isVoterChecked.get(voterId))
+                    throw new SignedBallotsDoNotExistsException(voter.getName());
                 if (checkBallotData(voter, vote)) {
-                    ballots.put(voterId, ballot);
+                    ballots.put(voterId, decryptedBallot);
                     voter.vote();
                 }
             } else {
