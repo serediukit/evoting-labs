@@ -12,13 +12,13 @@ class CentralElectionCommission {
     private final Map<Integer, Candidate> candidates;
     private final Map<Integer, Voter> voters;
     private final ArrayList<Boolean> isVoterChecked;
-    private final ArrayList<Ballot> ballots;
+    private final Map<Integer, Ballot> ballots;
 
     public CentralElectionCommission(KeyPair keyPair) {
-        candidates = new HashMap<>();
-        voters = new HashMap<>();
+        candidates = new TreeMap<>();
+        voters = new TreeMap<>();
         isVoterChecked = new ArrayList<>();
-        ballots = new ArrayList<>();
+        ballots = new TreeMap<>();
         this.keys = keyPair;
     }
 
@@ -35,7 +35,7 @@ class CentralElectionCommission {
     }
 
     public void conductElection() {
-        for (Ballot ballot : ballots) {
+        for (Ballot ballot : ballots.values()) {
             String decryptedData = ballot.getDecryptedData(keys.getPrivate());
             String[] data = decryptedData.split(" ");
             int voterId = Integer.parseInt(data[0]);
@@ -54,16 +54,17 @@ class CentralElectionCommission {
     public void sendBallot(Voter voter, Ballot ballot) {
         try {
             if (ballot != null) {
-                if (!ballot.isSigned())
+                String signedData = ballot.getData();
+                BigInteger s = Encryptor.getS(new BigInteger(signedData), voter.getR(), keys.getPublic());
+                BigInteger m = Encryptor.getM(s, keys.getPublic());
+                int voterId = m.divide(BigInteger.TEN).intValue();
+                int vote = m.mod(BigInteger.TEN).intValue();
+                if (!voters.containsKey(voterId))
                     throw new BallotIsNotSignedException();
-                String decryptedData = ballot.getDecryptedData(keys.getPrivate());
-                String[] data = decryptedData.split(" ");
-                int voterId = Integer.parseInt(data[0]);
-                int vote = Integer.parseInt(data[1]);
                 if (voter.getId() != voterId)
                     throw new OtherVoterException(voter.getName());
                 if (checkBallotData(voter, vote)) {
-                    ballots.add(ballot);
+                    ballots.put(voterId, ballot);
                     voter.vote();
                 }
             } else {
@@ -95,7 +96,7 @@ class CentralElectionCommission {
         return false;
     }
 
-    public ArrayList<Ballot> getSignedBallot(ArrayList<ArrayList<Ballot>> ballotsList, PrivateKey key, BigInteger r) {
+    public ArrayList<Ballot> getSignedBallot(ArrayList<ArrayList<Ballot>> ballotsList, BigInteger r) {
         Random rnd = new Random();
         int randIndex = rnd.nextInt(ballotsList.size());
         try {

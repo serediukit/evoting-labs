@@ -106,23 +106,21 @@ class Voter {
         return !signedBallots.isEmpty();
     }
 
-    public void makeSignedBallotsDecrypted(PublicKey key) {
-        if (signedBallots != null)
-            for (Ballot ballot : signedBallots) {
-                BigInteger s = Encryptor.getS(new BigInteger(ballot.getData()), r, key);
-                BigInteger m = Encryptor.getM(s, key);
-                ballot.setData(String.valueOf(m));
-            }
-    }
-
-    public Ballot chooseSignedBallotWithCandidate(int candidate) {
+    public Ballot chooseSignedBallotWithCandidate(PublicKey key, int candidate) {
         try {
             if (signedBallots == null)
                 throw new SignedBallotsDoNotExistsException(name);
-            Ballot res = signedBallots.get(candidate);
-            if (Integer.parseInt(res.getData().split(" ")[0]) != id)
-                throw new SignedBallotsDoNotExistsException(name);
-            return res;
+            for (Ballot ballot : signedBallots) {
+                String signedData = ballot.getData();
+                BigInteger s = Encryptor.getS(new BigInteger(signedData), r, key);
+                BigInteger m = Encryptor.getM(s, key);
+                int voterId = m.divide(BigInteger.TEN).intValue();
+                int vote = m.mod(BigInteger.TEN).intValue();
+                if (voterId != id)
+                    throw new SignedBallotsDoNotExistsException(name);
+                if (vote == candidate)
+                    return ballot;
+            }
         } catch (SignedBallotsDoNotExistsException e) {
             System.out.println(e.getMessage());
         }

@@ -47,39 +47,38 @@ public class Main {
             for (Voter voter : voters) {
 //                if (voter.getId() != 3) {
                     voter.generateBallots(countOfExamples, candidates.size(), CECKeyPair.getPublic());
-                    voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate(), voter.getR()));
-                    voter.makeSignedBallotsDecrypted(CECKeyPair.getPublic());
+                    voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getR()));
 //                }
             }
 //            voter4.generateFakeBallots(countOfExamples, candidates.size());
 //            voter4.setSignedBallots(CEC.getSignedBallot(voter4.getBallotsExamples(), voter4.getKeyPair().getPrivate()));
 //            voter4.makeSignedBallotsDecrypted();
 
-            Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(0);
+            Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter1Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter1, voter1Ballot);
 //            CEC.sendBallot(voter2, voter1Ballot);
 
 
-            Ballot voter2Ballot = voter2.chooseSignedBallotWithCandidate(0);
+            Ballot voter2Ballot = voter2.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter2Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter2, voter2Ballot);
 
-            Ballot voter3Ballot = voter3.chooseSignedBallotWithCandidate(0);
+            Ballot voter3Ballot = voter3.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter3Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter3, voter3Ballot);
             CEC.sendBallot(voter3, voter3Ballot);
             CEC.sendBallot(voter3, voter3Ballot);
 
-            Ballot voter4Ballot = voter4.chooseSignedBallotWithCandidate(1);
+            Ballot voter4Ballot = voter4.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 1);
             voter4Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter4, voter4Ballot);
 
-            Ballot voter5Ballot = voter5.chooseSignedBallotWithCandidate(0);
+            Ballot voter5Ballot = voter5.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter5Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter5, voter5Ballot);
 
-            Ballot voter6Ballot = voter6.chooseSignedBallotWithCandidate(0);
+            Ballot voter6Ballot = voter6.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter6Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter6, voter6Ballot);
 
