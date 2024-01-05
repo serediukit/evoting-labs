@@ -142,6 +142,13 @@ class CentralElectionCommission {
         }
     }
 
+    public Ballot getBallotFor(Voter voter) {
+        if (ballots.containsKey(voter.getId()))
+            return ballots.get(voter.getId());
+        else
+            return new Ballot("There is not ballot for the voter " + voter.getName());
+    }
+
     public void printVotingResults() {
         System.out.println("+------------------+--------------+");
         System.out.println("|        ELECTION  RESULTS        |");
