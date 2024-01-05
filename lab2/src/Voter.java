@@ -127,13 +127,15 @@ class Voter {
         return new Ballot(this, -1);
     }
 
-    public void generateFakeBallots(int examplesCount, int candidatesCount) {
+    public void generateFakeBallots(int examplesCount, int candidatesCount, PublicKey key) {
         ballotsExamples = new ArrayList<>();
+        r = Encryptor.findR(key);
         for (int i = 0; i < examplesCount; i++) {
             ArrayList<Ballot> temp = new ArrayList<>();
             for (int j = 0; j < candidatesCount; j++) {
-                Ballot tempBallot = new Ballot(this, i);
-                tempBallot.encrypt(keyPair.getPublic());
+                Ballot tempBallot = new Ballot(this, 0);
+                BigInteger m_ = Encryptor.getM_(Integer.parseInt(tempBallot.getData()), key, r);
+                tempBallot.setData(String.valueOf(m_));
                 temp.add(tempBallot);
             }
             ballotsExamples.add(temp);

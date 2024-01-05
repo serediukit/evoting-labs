@@ -2,8 +2,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class Ballot {
-    private String data = "";
-    private boolean isSigned = false;
+    private String data;
 
     public Ballot(Voter voter, int vote) {
         data = voter.getId() + "" + vote;
@@ -27,17 +26,5 @@ public class Ballot {
 
     public void setData(String data) {
         this.data = data;
-    }
-
-    public String getDecryptedData(PrivateKey key) {
-        return Encryptor.decrypt(data, key);
-    }
-
-    public boolean isSigned() {
-        return isSigned;
-    }
-
-    public void makeSigned() {
-        isSigned = true;
     }
 }

@@ -8,7 +8,7 @@ import CantVoteException.*;
 class CentralElectionCommission {
     private Integer candidatesCount = 0;
     private Integer votersCount = 0;
-    private KeyPair keys;
+    private final KeyPair keys;
     private final Map<Integer, Candidate> candidates;
     private final Map<Integer, Voter> voters;
     private final ArrayList<Boolean> isVoterChecked;
