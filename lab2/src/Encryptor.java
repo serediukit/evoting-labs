@@ -12,20 +12,15 @@ public class Encryptor {
             BigInteger e = ((RSAPublicKey) key).getPublicExponent();
             BigInteger n = ((RSAPublicKey) key).getModulus();
             return String.valueOf(m.modPow(e, n));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        } catch (Exception ignore) {}
         return null;
     }
 
     public static String decrypt(String data, PrivateKey key) {
-        try {
-            BigInteger m = new BigInteger(data);
-            BigInteger d = ((RSAPrivateKey) key).getPrivateExponent();
-            BigInteger n = ((RSAPrivateKey) key).getModulus();
-            return String.valueOf(m.modPow(d, n));
-        } catch (Exception ignored) { }
-        return null;
+        BigInteger m = new BigInteger(data);
+        BigInteger d = ((RSAPrivateKey) key).getPrivateExponent();
+        BigInteger n = ((RSAPrivateKey) key).getModulus();
+        return String.valueOf(m.modPow(d, n));
     }
 
     public static BigInteger findR(PublicKey key) {

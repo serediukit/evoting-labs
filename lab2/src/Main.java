@@ -50,9 +50,8 @@ public class Main {
                     voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getR()));
 //                }
             }
-//            voter4.generateFakeBallots(countOfExamples, candidates.size());
-//            voter4.setSignedBallots(CEC.getSignedBallot(voter4.getBallotsExamples(), voter4.getKeyPair().getPrivate()));
-//            voter4.makeSignedBallotsDecrypted();
+//            voter4.generateFakeBallots(countOfExamples, candidates.size(), CECKeyPair.getPublic());
+//            voter4.setSignedBallots(CEC.getSignedBallot(voter4.getBallotsExamples(), voter4.getR()));
 
             Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter1Ballot.encrypt(CECKeyPair.getPublic());
@@ -85,12 +84,12 @@ public class Main {
             // Conduct the election
             CEC.conductElection();
 
-            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
-            System.out.println(CEC.getBallotFor(voter2).getData());
-            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
-            System.out.println(CEC.getBallotFor(voter3).getData());
-            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
-            System.out.println(CEC.getBallotFor(voter4).getData());
+//            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
+//            System.out.println(CEC.getBallotFor(voter2).getData());
+//            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
+//            System.out.println(CEC.getBallotFor(voter3).getData());
+//            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
+//            System.out.println(CEC.getBallotFor(voter4).getData());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

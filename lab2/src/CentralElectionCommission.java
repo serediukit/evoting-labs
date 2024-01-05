@@ -53,7 +53,7 @@ class CentralElectionCommission {
 
     public void sendBallot(Voter voter, Ballot ballot) {
         try {
-            if (ballot != null) {
+            if (ballot != null && ballot.getData() != null) {
                 Ballot decryptedBallot = new Ballot(Encryptor.decrypt(ballot.getData(), keys.getPrivate()));
                 String signedData = decryptedBallot.getData();
                 BigInteger s = Encryptor.getS(new BigInteger(signedData), voter.getR(), keys.getPublic());
