@@ -1,6 +1,7 @@
 import javax.crypto.Cipher;
 import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Base64;
 
 public class Ballot {
@@ -12,12 +13,15 @@ public class Ballot {
     }
 
     private String encryptData(Voter voter, String data) {
-        KeyPair keys = voter.getKeyPair();
-        return Encryptor.encrypt(data, keys.getPublic());
+        return Encryptor.encrypt(data, voter.getKeyPair().getPublic());
     }
 
     public String getDecryptedData(PrivateKey key) {
         return Encryptor.decrypt(data, key);
+    }
+
+    public void resignBallot(Voter voter, PublicKey key) {
+        data = Encryptor.encrypt(getDecryptedData(voter.getKeyPair().getPrivate()), key);
     }
 
     public boolean isSigned() {

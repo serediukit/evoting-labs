@@ -1,4 +1,5 @@
 import CantVoteException.OtherVoterException;
+import CantVoteException.SignedBallotsDoNotExistsException;
 import CantVoteException.VoteIsNotValidException;
 import CantVoteException.VoterHasAlreadyVotedException;
 
@@ -13,8 +14,6 @@ class Voter {
     private int id;
     private final String name;
     private final KeyPair keyPair;
-    private int vote;
-    private String encryptedVote;
     private ArrayList<ArrayList<Ballot>> ballotsExamples;
     private ArrayList<Ballot> signedBallots;
 
@@ -24,7 +23,6 @@ class Voter {
         canVote = true;
         hasVoted = false;
         hasCounted = false;
-        vote = -1;
     }
 
     public Voter(String name, KeyPair keyPair, boolean canVote) {
@@ -33,7 +31,6 @@ class Voter {
         this.canVote = canVote;
         hasVoted = false;
         hasCounted = false;
-        vote = -1;
     }
 
     public int getId() {
@@ -52,16 +49,9 @@ class Voter {
         return keyPair;
     }
 
-    public int getVote() {
-        return vote;
-    }
 
-    public String getEncryptedVote() {
-        return encryptedVote;
-    }
-
-    public void setEncryptedVote(String encryptedVote) {
-        this.encryptedVote = encryptedVote;
+    public void vote() {
+        hasVoted = true;
     }
 
     public boolean hasVoted() {
@@ -70,23 +60,6 @@ class Voter {
 
     public boolean canVote() {
         return canVote;
-    }
-
-    public void makeVote(int vote) throws VoterHasAlreadyVotedException, VoteIsNotValidException, OtherVoterException {
-        if (!hasVoted && signedBallots != null) {
-            if (signedBallots.get(vote).getDecryptedData(keyPair.getPrivate()) == null) {
-                throw new OtherVoterException(name);
-            }
-            String[] data = signedBallots.get(vote).getDecryptedData(keyPair.getPrivate()).split(" ");
-            if (Integer.parseInt(data[0]) == id && Integer.parseInt(data[1]) == vote) {
-                this.vote = Integer.parseInt(data[1]);
-                hasVoted = true;
-            } else {
-                throw new VoteIsNotValidException(name);
-            }
-        } else {
-            throw new VoterHasAlreadyVotedException(this.name);
-        }
     }
 
     public void makeCounted() {
@@ -118,5 +91,17 @@ class Voter {
     public boolean hasSignedBallots() {
         if (signedBallots == null) return false;
         return !signedBallots.isEmpty();
+    }
+
+    public Ballot chooseSignedBallotWithCandidate(int candidate) {
+        Ballot res = signedBallots.get(candidate);
+        try {
+            if (Integer.parseInt(res.getDecryptedData(keyPair.getPrivate()).split(" ")[0]) != id)
+                throw new SignedBallotsDoNotExistsException(name);
+            return res;
+        } catch (SignedBallotsDoNotExistsException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }
