@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.security.*;
 import java.util.*;
 
@@ -94,9 +95,9 @@ class CentralElectionCommission {
         return false;
     }
 
-    public ArrayList<Ballot> getSignedBallot(ArrayList<ArrayList<Ballot>> ballotsList, PrivateKey key) {
-        Random r = new Random();
-        int randIndex = r.nextInt(ballotsList.size());
+    public ArrayList<Ballot> getSignedBallot(ArrayList<ArrayList<Ballot>> ballotsList, PrivateKey key, BigInteger r) {
+        Random rnd = new Random();
+        int randIndex = rnd.nextInt(ballotsList.size());
         try {
             if (ballotsList.isEmpty())
                 throw new ExamplesDoesNotExistException();
@@ -105,13 +106,16 @@ class CentralElectionCommission {
             for (int i = 0; i < ballotsList.size(); i++) {
                 if (i != randIndex) {
                     for (int j = 0; j < ballotsList.get(i).size(); j++) {
-                        String decryptedData = ballotsList.get(i).get(j).getDecryptedData(key);
-                        String[] data = decryptedData.split(" ");
-                        voterId = Integer.parseInt(data[0]);
+                        String ballotData = ballotsList.get(i).get(j).getData();
+                        BigInteger s_ = Encryptor.getS_(new BigInteger(ballotData), keys.getPrivate());
+                        BigInteger s = Encryptor.getS(s_, r, keys.getPublic());
+                        BigInteger m = Encryptor.getM(s, keys.getPublic());
+                        voterId = m.divide(BigInteger.TEN).intValue();
+                        int vote = m.mod(BigInteger.TEN).intValue();
                         if (voterId != prevVoterId && prevVoterId != -1)
                             throw new IncorrectBallotsList();
-                        if (Integer.parseInt(data[1]) != j)
-                            throw new BallotIsNotValidException(decryptedData);
+                        if (vote != j)
+                            throw new BallotIsNotValidException(voters.get(voterId).getName());
                         if (isVoterChecked.get(voterId))
                             throw new VoterAlreadyHasSignedBallots();
                         prevVoterId = voterId;
@@ -121,7 +125,9 @@ class CentralElectionCommission {
             ArrayList<Ballot> signedBallots = new ArrayList<>();
             for (int i = 0; i < ballotsList.get(randIndex).size(); i++) {
                 Ballot signedBallot = ballotsList.get(randIndex).get(i);
-                signedBallot.makeSigned();
+                String signedData = signedBallot.getData();
+                BigInteger s_ = Encryptor.getS_(new BigInteger(signedData), keys.getPrivate());
+                signedBallot.setData(String.valueOf(s_));
                 signedBallots.add(signedBallot);
             }
             isVoterChecked.set(voterId, true);
@@ -130,10 +136,6 @@ class CentralElectionCommission {
             System.out.println(e.getMessage());
             return null;
         }
-    }
-
-    public int getCandidatesCount() {
-        return candidatesCount;
     }
 
     public void printVotingResults() {

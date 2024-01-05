@@ -46,9 +46,9 @@ public class Main {
 
             for (Voter voter : voters) {
 //                if (voter.getId() != 3) {
-                    voter.generateBallots(countOfExamples, candidates.size());
-                    voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate()));
-                    voter.makeSignedBallotsDecrypted();
+                    voter.generateBallots(countOfExamples, candidates.size(), CECKeyPair.getPublic());
+                    voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate(), voter.getR()));
+                    voter.makeSignedBallotsDecrypted(CECKeyPair.getPublic());
 //                }
             }
 //            voter4.generateFakeBallots(countOfExamples, candidates.size());
@@ -86,9 +86,9 @@ public class Main {
             // Conduct the election
             CEC.conductElection();
 
-            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
-            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
-            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
+//            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
+//            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
+//            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

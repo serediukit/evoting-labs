@@ -6,7 +6,7 @@ public class Ballot {
     private boolean isSigned = false;
 
     public Ballot(Voter voter, int vote) {
-        data = voter.getId() + " " + vote;
+        data = voter.getId() + "" + vote;
     }
 
     public void encrypt(PublicKey key) {
@@ -19,6 +19,10 @@ public class Ballot {
 
     public String getData() {
         return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public String getDecryptedData(PrivateKey key) {

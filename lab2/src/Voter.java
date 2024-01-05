@@ -3,7 +3,10 @@ import CantVoteException.SignedBallotsDoNotExistsException;
 import CantVoteException.VoteIsNotValidException;
 import CantVoteException.VoterHasAlreadyVotedException;
 
+import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 
@@ -14,6 +17,7 @@ class Voter {
     private int id;
     private final String name;
     private final KeyPair keyPair;
+    private BigInteger r;
     private ArrayList<ArrayList<Ballot>> ballotsExamples;
     private ArrayList<Ballot> signedBallots;
 
@@ -70,13 +74,19 @@ class Voter {
         return hasCounted;
     }
 
-    public void generateBallots(int examplesCount, int candidatesCount) {
+    public BigInteger getR() {
+        return r;
+    }
+
+    public void generateBallots(int examplesCount, int candidatesCount, PublicKey key) {
         ballotsExamples = new ArrayList<>();
+        r = Encryptor.findR(key);
         for (int i = 0; i < examplesCount; i++) {
             ArrayList<Ballot> temp = new ArrayList<>();
             for (int j = 0; j < candidatesCount; j++) {
                 Ballot tempBallot = new Ballot(this, j);
-                tempBallot.encrypt(keyPair.getPublic());
+                BigInteger m_ = Encryptor.getM_(Integer.parseInt(tempBallot.getData()), key, r);
+                tempBallot.setData(String.valueOf(m_));
                 temp.add(tempBallot);
             }
             ballotsExamples.add(temp);
@@ -96,10 +106,13 @@ class Voter {
         return !signedBallots.isEmpty();
     }
 
-    public void makeSignedBallotsDecrypted() {
+    public void makeSignedBallotsDecrypted(PublicKey key) {
         if (signedBallots != null)
-            for (Ballot ballot : signedBallots)
-                ballot.decrypt(keyPair.getPrivate());
+            for (Ballot ballot : signedBallots) {
+                BigInteger s = Encryptor.getS(new BigInteger(ballot.getData()), r, key);
+                BigInteger m = Encryptor.getM(s, key);
+                ballot.setData(String.valueOf(m));
+            }
     }
 
     public Ballot chooseSignedBallotWithCandidate(int candidate) {
