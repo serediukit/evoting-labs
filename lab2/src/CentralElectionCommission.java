@@ -43,15 +43,7 @@ class CentralElectionCommission {
             voters.get(voterId).makeCounted();
         }
 
-        System.out.println("+------------------+--------------+");
-        System.out.println("|        ELECTION  RESULTS        |");
-        System.out.println("+------------------+--------------+");
-        System.out.println("|    CANDIDATES    |     VOTES    |");
-        System.out.println("+------------------+--------------+");
-        for (Candidate candidate : candidates.values()) {
-            System.out.printf("| %16s | %12d |\n", candidate.getName(), candidate.getVotesCount());
-        }
-        System.out.println("+------------------+--------------+");
+        printVotingResults();
     }
 
     public void sendBallot(Voter voter, Ballot ballot) {
@@ -138,6 +130,18 @@ class CentralElectionCommission {
 
     public int getCandidatesCount() {
         return candidatesCount;
+    }
+
+    public void printVotingResults() {
+        System.out.println("+------------------+--------------+");
+        System.out.println("|        ELECTION  RESULTS        |");
+        System.out.println("+------------------+--------------+");
+        System.out.println("|    CANDIDATES    |     VOTES    |");
+        System.out.println("+------------------+--------------+");
+        for (Candidate candidate : candidates.values()) {
+            System.out.printf("| %16s | %12d |\n", candidate.getName(), candidate.getVotesCount());
+        }
+        System.out.println("+------------------+--------------+");
     }
 
     public void printVotingStatus() {
