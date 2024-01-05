@@ -49,11 +49,12 @@ public class Main {
                 voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate()));
                 voter.makeSignedBallotsDecrypted();
             }
-//            voter3.setSignedBallots(CEC.getSignedBallot(voter1));
 
             Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(0);
             voter1Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter1, voter1Ballot);
+//            CEC.sendBallot(voter2, voter1Ballot);
+
 
             Ballot voter2Ballot = voter2.chooseSignedBallotWithCandidate(0);
             voter2Ballot.encrypt(CECKeyPair.getPublic());

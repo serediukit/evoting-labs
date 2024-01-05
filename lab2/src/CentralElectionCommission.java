@@ -39,8 +39,12 @@ class CentralElectionCommission {
             String[] data = decryptedData.split(" ");
             int voterId = Integer.parseInt(data[0]);
             int vote = Integer.parseInt(data[1]);
+//            if (voterId == 3)
+//                candidates.get(0).votesInc();
+//            else
             candidates.get(vote).votesInc();
             voters.get(voterId).makeCounted();
+//            System.out.println(voters.get(voterId).getName() + "'s vote - " + vote);
         }
 
         printVotingResults();
