@@ -2,7 +2,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class Ballot {
-    private String data;
+    private String data = "";
     private boolean isSigned = false;
 
     public Ballot(Voter voter, int vote) {

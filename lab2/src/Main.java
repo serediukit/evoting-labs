@@ -45,10 +45,15 @@ public class Main {
                 CEC.addVoter(voter);
 
             for (Voter voter : voters) {
-                voter.generateBallots(countOfExamples, candidates.size());
-                voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate()));
-                voter.makeSignedBallotsDecrypted();
+//                if (voter.getId() != 3) {
+                    voter.generateBallots(countOfExamples, candidates.size());
+                    voter.setSignedBallots(CEC.getSignedBallot(voter.getBallotsExamples(), voter.getKeyPair().getPrivate()));
+                    voter.makeSignedBallotsDecrypted();
+//                }
             }
+//            voter4.generateFakeBallots(countOfExamples, candidates.size());
+//            voter4.setSignedBallots(CEC.getSignedBallot(voter4.getBallotsExamples(), voter4.getKeyPair().getPrivate()));
+//            voter4.makeSignedBallotsDecrypted();
 
             Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(0);
             voter1Ballot.encrypt(CECKeyPair.getPublic());

@@ -97,20 +97,35 @@ class Voter {
     }
 
     public void makeSignedBallotsDecrypted() {
-        for (Ballot ballot : signedBallots) {
-            ballot.decrypt(keyPair.getPrivate());
-        }
+        if (signedBallots != null)
+            for (Ballot ballot : signedBallots)
+                ballot.decrypt(keyPair.getPrivate());
     }
 
     public Ballot chooseSignedBallotWithCandidate(int candidate) {
-        Ballot res = signedBallots.get(candidate);
         try {
+            if (signedBallots == null)
+                throw new SignedBallotsDoNotExistsException(name);
+            Ballot res = signedBallots.get(candidate);
             if (Integer.parseInt(res.getData().split(" ")[0]) != id)
                 throw new SignedBallotsDoNotExistsException(name);
             return res;
         } catch (SignedBallotsDoNotExistsException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return new Ballot(this, -1);
+    }
+
+    public void generateFakeBallots(int examplesCount, int candidatesCount) {
+        ballotsExamples = new ArrayList<>();
+        for (int i = 0; i < examplesCount; i++) {
+            ArrayList<Ballot> temp = new ArrayList<>();
+            for (int j = 0; j < candidatesCount; j++) {
+                Ballot tempBallot = new Ballot(this, i);
+                tempBallot.encrypt(keyPair.getPublic());
+                temp.add(tempBallot);
+            }
+            ballotsExamples.add(temp);
+        }
     }
 }
