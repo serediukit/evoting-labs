@@ -56,7 +56,7 @@ public class Main {
             Ballot voter1Ballot = voter1.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
             voter1Ballot.encrypt(CECKeyPair.getPublic());
             CEC.sendBallot(voter1, voter1Ballot);
-            CEC.sendBallot(voter2, voter1Ballot);
+//            CEC.sendBallot(voter2, voter1Ballot);
 
 
             Ballot voter2Ballot = voter2.chooseSignedBallotWithCandidate(CECKeyPair.getPublic(), 0);
@@ -84,12 +84,12 @@ public class Main {
             // Conduct the election
             CEC.conductElection();
 
-//            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
-//            System.out.println(CEC.getBallotFor(voter2).getData());
-//            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
-//            System.out.println(CEC.getBallotFor(voter3).getData());
-//            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
-//            System.out.println(CEC.getBallotFor(voter4).getData());
+            System.out.println("Checking if " + voter2.getName() + " has been counted: " + voter2.checkIfCounted());
+            System.out.println(CEC.getBallotFor(voter2).getData());
+            System.out.println("Checking if " + voter3.getName() + " has been counted: " + voter3.checkIfCounted());
+            System.out.println(CEC.getBallotFor(voter3).getData());
+            System.out.println("Checking if " + voter4.getName() + " has been counted: " + voter4.checkIfCounted());
+            System.out.println(CEC.getBallotFor(voter4).getData());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
