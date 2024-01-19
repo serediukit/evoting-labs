@@ -2,32 +2,41 @@ import java.math.BigInteger;
 
 public class Voter {
     private boolean canVote;
-    private boolean hasVoted;
-    private boolean hasCounted;
-    private int id;
+    private BigInteger id;
     private BigInteger regId;
-    private String name;
+    private final String name;
 
     public Voter(String name, boolean canVote) {
         this.name = name;
         this.canVote = canVote;
-        this.hasVoted = false;
-        this.hasCounted = false;
     }
 
-    public void setId(int id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
     public void setRegId(BigInteger regId) {
-        this.regId = regId;
+        if (regId != null)
+            this.regId = regId;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getId() {
+    public BigInteger getId() {
         return id;
+    }
+
+    public boolean canVote() {
+        return canVote;
+    }
+
+    public void setCanVote(boolean canVote) {
+        this.canVote = canVote;
+    }
+
+    public VoteMessage getVoteMessage(int candidateId) {
+        return new VoteMessage(id, regId, new Ballot(String.valueOf(candidateId)));
     }
 }

@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 public class RegistrationOffice {
-
+    private final ElectionCommission electionCommission;
     private final Map<Voter, BigInteger> registrationList;
 
-    public RegistrationOffice() {
+    public RegistrationOffice(ElectionCommission electionCommission) {
+        this.electionCommission = electionCommission;
         registrationList = new HashMap<>();
     }
 
@@ -21,6 +22,7 @@ public class RegistrationOffice {
             }
             BigInteger registrationNumber = generateRegistrationNumber();
             registrationList.put(voter, registrationNumber);
+            electionCommission.sendRegistrationList(registrationList.values().stream().toList());
             return registrationNumber;
         } catch (VoterHasAlreadyRegisteredException exception) {
             System.out.println(exception.getMessage());
