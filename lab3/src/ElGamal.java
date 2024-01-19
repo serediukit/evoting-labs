@@ -31,7 +31,6 @@ public class ElGamal {
         return new BigInteger[]{c1, c2};
     }
 
-    // Decryption
     public BigInteger decrypt(BigInteger[] ciphertext) {
         BigInteger c1 = ciphertext[0];
         BigInteger c2 = ciphertext[1];

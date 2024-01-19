@@ -5,7 +5,7 @@ public class VoterFactory {
     public static List<Voter> generateVoters(int count) {
         List<Voter> voters = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            voters.add(VoterFactory.createVoter("voter " + i, true));
+            voters.add(VoterFactory.createVoter("voter" + i, true));
         }
         return voters;
     }

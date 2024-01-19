@@ -10,7 +10,7 @@ public class Main {
 
         List<Candidate> candidates = CandidateFactory.generateCandidates(3);
         List<Voter> voters = VoterFactory.generateVoters(10);
-        voters.get(5).setCanVote(false);
+//        voters.get(5).setCanVote(false);
 
         ElectionCommission electionCommission = new ElectionCommission();
         RegistrationOffice registrationOffice = new RegistrationOffice(electionCommission);
@@ -21,10 +21,12 @@ public class Main {
             voter.setRegId(registrationOffice.registerVoter(voter));
             voter.setId(IDGenerator.generateID());
         }
-        voters.get(3).setRegId(registrationOffice.registerVoter(voters.get(3)));
+//        voters.get(3).setRegId(registrationOffice.registerVoter(voters.get(3)));
 
         for (Voter voter : voters) {
-            electionCommission.sendMessage(voter.getVoteMessage(testVotes.get(count)));
+            VoteMessage message = voter.getVoteMessage(testVotes.get(count));
+            SignedEncryptedMessage signedEncryptedMessage = new SignedEncryptedMessage(message, new ElGamal(), new DSA());
+            electionCommission.sendMessage(signedEncryptedMessage);
             count++;
         }
 

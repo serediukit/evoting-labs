@@ -20,11 +20,26 @@ public class ElectionCommission {
         this.registrationList = new ArrayList<>(registrationList);
     }
 
-    public void sendMessage(VoteMessage message) {
+    public void sendMessage(SignedEncryptedMessage signedEncryptedMessage) {
         try {
+            BigInteger decryptedMessage = signedEncryptedMessage.elGamal.decrypt(signedEncryptedMessage.message);
+            String stringMessage = decryptedMessage.toString(16);
+            String[] splitMessage = stringMessage.split(" ");
+            VoteMessage message = new VoteMessage(
+                    new BigInteger(splitMessage[0]),
+                    new BigInteger(splitMessage[1]),
+                    new Ballot(splitMessage[2])
+            );
             if (checkVoteMessage(message)) {
-                registeredVotes.put(message.regId, message.ballot);
-                candidates.get(Integer.parseInt(message.ballot.getData())).incrementVotes();
+                int vote = Integer.parseInt(message.ballot.getData());
+                for (Candidate candidate : candidates) {
+                    if (candidate.getId() == vote) {
+                        registeredVotes.put(message.regId, message.ballot);
+                        candidate.incrementVotes();
+                        return;
+                    }
+                }
+                throw new CandidateDoesNotExist("candidate" + vote);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -1,4 +1,4 @@
-import CantVoteException.VoterHasAlreadyRegisteredException;
+import CantVoteException.*;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -20,11 +20,14 @@ public class RegistrationOffice {
             if (registrationList.containsKey(voter)) {
                 throw new VoterHasAlreadyRegisteredException(voter.getName());
             }
+            if (!voter.canVote()) {
+                throw new CantVoteException(voter.getName());
+            }
             BigInteger registrationNumber = generateRegistrationNumber();
             registrationList.put(voter, registrationNumber);
             electionCommission.sendRegistrationList(registrationList.values().stream().toList());
             return registrationNumber;
-        } catch (VoterHasAlreadyRegisteredException exception) {
+        } catch (VoterHasAlreadyRegisteredException | CantVoteException exception) {
             System.out.println(exception.getMessage());
         }
         return null;

@@ -10,4 +10,9 @@ public class VoteMessage {
         this.regId = regId;
         this.ballot = ballot;
     }
+
+    @Override
+    public String toString() {
+        return id + " " + regId + " " + ballot.getData();
+    }
 }
