@@ -30,16 +30,20 @@ public class ElectionCommission {
                     new BigInteger(splitMessage[1]),
                     new Ballot(splitMessage[2])
             );
-            if (checkVoteMessage(message)) {
-                int vote = Integer.parseInt(message.ballot.getData());
-                for (Candidate candidate : candidates) {
-                    if (candidate.getId() == vote) {
-                        registeredVotes.put(message.regId, message.ballot);
-                        candidate.incrementVotes();
-                        return;
+            if (signedEncryptedMessage.dsa.verify(decryptedMessage, signedEncryptedMessage.signature)) {
+                if (checkVoteMessage(message)) {
+                    int vote = Integer.parseInt(message.ballot.getData());
+                    for (Candidate candidate : candidates) {
+                        if (candidate.getId() == vote) {
+                            registeredVotes.put(message.regId, message.ballot);
+                            candidate.incrementVotes();
+                            return;
+                        }
                     }
+                    throw new CandidateDoesNotExist("candidate" + vote);
                 }
-                throw new CandidateDoesNotExist("candidate" + vote);
+            } else {
+                throw new SignatureVerificationException();
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
