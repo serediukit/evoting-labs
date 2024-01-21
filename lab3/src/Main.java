@@ -1,3 +1,5 @@
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,8 @@ public class Main {
 
         List<Candidate> candidates = CandidateFactory.generateCandidates(3);
         List<Voter> voters = VoterFactory.generateVoters(10);
-        voters.get(5).setCanVote(false);
-        voters.get(7).setCanVote(false);
+//        voters.get(5).setCanVote(false);
+//        voters.get(7).setCanVote(false);
 
         ElectionCommission electionCommission = new ElectionCommission();
         RegistrationOffice registrationOffice = new RegistrationOffice(electionCommission);
@@ -24,11 +26,24 @@ public class Main {
         }
 //        voters.get(3).setRegId(registrationOffice.registerVoter(voters.get(3)));
 
+//        Voter chanceVoter = new Voter("chance", true);
+//        chanceVoter.setRegId(new BigInteger(64, new SecureRandom()));
+//        chanceVoter.setId(IDGenerator.generateID());
+//        chanceVoter.createKeys();
+//        VoteMessage msg = chanceVoter.getVoteMessage(2);
+//        SignedEncryptedMessage signedEncryptedMsg = new SignedEncryptedMessage(msg, chanceVoter.getElGamal(), chanceVoter.getDsa());
+//        electionCommission.sendMessage(signedEncryptedMsg);
+
         for (Voter voter : voters) {
             voter.createKeys();
             VoteMessage message = voter.getVoteMessage(testVotes.get(count));
             SignedEncryptedMessage signedEncryptedMessage = new SignedEncryptedMessage(message, voter.getElGamal(), voter.getDsa());
             electionCommission.sendMessage(signedEncryptedMessage);
+//            if (voter.equals(voters.get(3))) {
+//                electionCommission.sendMessage(signedEncryptedMessage);
+//                electionCommission.sendMessage(signedEncryptedMessage);
+//                electionCommission.sendMessage(signedEncryptedMessage);
+//            }
             count++;
         }
 
