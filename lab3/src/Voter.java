@@ -5,6 +5,8 @@ public class Voter {
     private BigInteger id;
     private BigInteger regId;
     private final String name;
+    private ElGamal elGamal;
+    private DSA dsa;
 
     public Voter(String name, boolean canVote) {
         this.name = name;
@@ -38,5 +40,18 @@ public class Voter {
 
     public VoteMessage getVoteMessage(int candidateId) {
         return new VoteMessage(id, regId, new Ballot(String.valueOf(candidateId)));
+    }
+
+    public void createKeys() {
+        elGamal = new ElGamal();
+        dsa = new DSA();
+    }
+
+    public ElGamal getElGamal() {
+        return elGamal;
+    }
+
+    public DSA getDsa() {
+        return dsa;
     }
 }

@@ -24,8 +24,9 @@ public class Main {
 //        voters.get(3).setRegId(registrationOffice.registerVoter(voters.get(3)));
 
         for (Voter voter : voters) {
+            voter.createKeys();
             VoteMessage message = voter.getVoteMessage(testVotes.get(count));
-            SignedEncryptedMessage signedEncryptedMessage = new SignedEncryptedMessage(message, new ElGamal(), new DSA());
+            SignedEncryptedMessage signedEncryptedMessage = new SignedEncryptedMessage(message, voter.getElGamal(), voter.getDsa());
             electionCommission.sendMessage(signedEncryptedMessage);
             count++;
         }

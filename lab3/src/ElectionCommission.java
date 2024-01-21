@@ -23,12 +23,13 @@ public class ElectionCommission {
     public void sendMessage(SignedEncryptedMessage signedEncryptedMessage) {
         try {
             BigInteger decryptedMessage = signedEncryptedMessage.elGamal.decrypt(signedEncryptedMessage.message);
-            String stringMessage = decryptedMessage.toString(16);
-            String[] splitMessage = stringMessage.split(" ");
+            BigInteger id = decryptedMessage.divide(BigInteger.TEN.pow(24));
+            BigInteger regId = decryptedMessage.mod(BigInteger.TEN.pow(24)).divide(BigInteger.TEN.pow(2));
+            BigInteger ballot = decryptedMessage.mod(BigInteger.TEN.pow(2));
             VoteMessage message = new VoteMessage(
-                    new BigInteger(splitMessage[0]),
-                    new BigInteger(splitMessage[1]),
-                    new Ballot(splitMessage[2])
+                    id,
+                    regId,
+                    new Ballot(ballot.toString())
             );
             if (signedEncryptedMessage.dsa.verify(decryptedMessage, signedEncryptedMessage.signature)) {
                 if (checkVoteMessage(message)) {
