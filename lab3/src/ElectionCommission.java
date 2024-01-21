@@ -51,12 +51,18 @@ public class ElectionCommission {
         }
     }
 
-    private boolean checkVoteMessage(VoteMessage message) throws VoterIsNotRegisteredException, VoterHasAlreadyVotedException {
+    private boolean checkVoteMessage(VoteMessage message) throws
+            VoterIsNotRegisteredException,
+            VoterHasAlreadyVotedException,
+            CandidateDoesNotExist {
         if (!registrationList.contains(message.regId)) {
             throw new VoterIsNotRegisteredException();
         }
         if (registeredVotes.containsKey(message.regId)) {
             throw new VoterHasAlreadyVotedException();
+        }
+        if (!isCandidateInList(Integer.parseInt(message.ballot.getData()))) {
+            throw new CandidateDoesNotExist("with id " + message.ballot.getData());
         }
         return true;
     }
@@ -83,5 +89,14 @@ public class ElectionCommission {
             System.out.printf("| %21s | %12s |\n", regId, registeredVotes.get(regId).getData());
         }
         System.out.println("+-----------------------+--------------+\n");
+    }
+
+    private boolean isCandidateInList(int candidateId) {
+        for (Candidate candidate : candidates) {
+            if (candidate.getId() == candidateId) {
+                return true;
+            }
+        }
+        return false;
     }
 }
