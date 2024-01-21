@@ -10,7 +10,8 @@ public class Main {
 
         List<Candidate> candidates = CandidateFactory.generateCandidates(3);
         List<Voter> voters = VoterFactory.generateVoters(10);
-//        voters.get(5).setCanVote(false);
+        voters.get(5).setCanVote(false);
+        voters.get(7).setCanVote(false);
 
         ElectionCommission electionCommission = new ElectionCommission();
         RegistrationOffice registrationOffice = new RegistrationOffice(electionCommission);

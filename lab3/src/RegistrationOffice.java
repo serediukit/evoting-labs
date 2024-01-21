@@ -3,7 +3,6 @@ import CantVoteException.*;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RegistrationOffice {
@@ -31,10 +30,6 @@ public class RegistrationOffice {
             System.out.println(exception.getMessage());
         }
         return null;
-    }
-
-    public List<BigInteger> getRegistrationList() {
-        return registrationList.values().stream().toList();
     }
 
     private BigInteger generateRegistrationNumber() {

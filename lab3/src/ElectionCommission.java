@@ -22,6 +22,9 @@ public class ElectionCommission {
 
     public void sendMessage(SignedEncryptedMessage signedEncryptedMessage) {
         try {
+            if (signedEncryptedMessage.message == null) {
+                throw new IncorrectMessageException();
+            }
             BigInteger decryptedMessage = signedEncryptedMessage.elGamal.decrypt(signedEncryptedMessage.message);
             BigInteger id = decryptedMessage.divide(BigInteger.TEN.pow(24));
             BigInteger regId = decryptedMessage.mod(BigInteger.TEN.pow(24)).divide(BigInteger.TEN.pow(2));

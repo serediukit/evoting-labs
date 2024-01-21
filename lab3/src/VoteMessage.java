@@ -13,8 +13,11 @@ public class VoteMessage {
 
     @Override
     public String toString() {
-        BigInteger id_ = id.multiply(BigInteger.TEN.pow(24));
-        BigInteger regId_ = regId.multiply(BigInteger.TEN.pow(2));
-        return (id_.add(regId_).add(new BigInteger(ballot.getData()))).toString();
+        try {
+            BigInteger id_ = id.multiply(BigInteger.TEN.pow(24));
+            BigInteger regId_ = regId.multiply(BigInteger.TEN.pow(2));
+            return (id_.add(regId_).add(new BigInteger(ballot.getData()))).toString();
+        } catch (Exception ignored) {}
+        return "Invalid";
     }
 }

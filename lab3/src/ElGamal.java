@@ -24,20 +24,20 @@ public class ElGamal {
     public BigInteger[] encrypt(BigInteger plaintext) {
         BigInteger k = new BigInteger(512, new SecureRandom());
 
-        BigInteger c1 = g.modPow(k, p);
+        BigInteger a = g.modPow(k, p);
 
-        BigInteger c2 = plaintext.multiply(y.modPow(k, p)).mod(p);
+        BigInteger b = plaintext.multiply(y.modPow(k, p)).mod(p);
 
-        return new BigInteger[]{c1, c2};
+        return new BigInteger[]{a, b};
     }
 
     public BigInteger decrypt(BigInteger[] ciphertext) {
-        BigInteger c1 = ciphertext[0];
-        BigInteger c2 = ciphertext[1];
+        BigInteger a = ciphertext[0];
+        BigInteger b = ciphertext[1];
 
-        BigInteger s = c1.modPow(x, p);
+        BigInteger s = a.modPow(x, p);
         BigInteger sInverse = s.modInverse(p);
 
-        return c2.multiply(sInverse).mod(p);
+        return b.multiply(sInverse).mod(p);
     }
 }
