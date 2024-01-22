@@ -34,6 +34,39 @@ public class Main {
             voter.shuffleBallots();
         }
 
+        A.decryptBallots();
         A.sign();
+        A.shuffleBallots();
+        A.sendBallots(B);
+        A.sendBallots(C);
+        A.sendBallots(D);
+
+        B.verifySign();
+        B.decryptBallots();
+        B.sign();
+        B.shuffleBallots();
+        B.sendBallots(A);
+        B.sendBallots(C);
+        B.sendBallots(D);
+
+        C.verifySign();
+        C.decryptBallots();
+        C.sign();
+        C.shuffleBallots();
+        C.sendBallots(A);
+        C.sendBallots(B);
+        C.sendBallots(D);
+
+        D.verifySign();
+        D.decryptBallots();
+        D.sign();
+        D.shuffleBallots();
+        D.sendBallots(A);
+        D.sendBallots(B);
+        D.sendBallots(C);
+
+        for (Ballot ballot : D.getBallots()) {
+            System.out.println(ballot.getData());
+        }
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ElGamal {
 
@@ -27,31 +28,38 @@ public class ElGamal {
     }
 
     public BigInteger[] sign(String message) {
-        BigInteger plaintext = getPlaintext(message);
+        BigInteger m = getHashedText(message);
 
         BigInteger k = new BigInteger(512, new SecureRandom());
 
-        BigInteger a = g.modPow(k, p);
+        BigInteger r = g.modPow(k, p);
 
-        BigInteger b = plaintext.multiply(y.modPow(k, p)).mod(p);
+        BigInteger s = m.multiply(y.modPow(k, p)).mod(p);
 
-        return new BigInteger[]{a, b};
+        return new BigInteger[]{r, s};
     }
 
-    public BigInteger verify(BigInteger[] ciphertext) {
-        BigInteger a = ciphertext[0];
-        BigInteger b = ciphertext[1];
+    public boolean verify(String message, BigInteger[] ciphertext) {
+        BigInteger m = getHashedText(message);
 
-        BigInteger s = a.modPow(x, p);
-        BigInteger sInverse = s.modInverse(p);
+        BigInteger r = ciphertext[0];
+        BigInteger s = ciphertext[1];
 
-        return b.multiply(sInverse).mod(p);
+        BigInteger a = r.modPow(x, p);
+        BigInteger b = a.modInverse(p);
+
+        return s.multiply(b).mod(p).compareTo(m) == 0;
     }
 
-    private BigInteger getPlaintext(String message) {
+    private BigInteger getHashedText(String message) {
         byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
-        List<byte[]> bytesList = Collections.singletonList(bytes);
-        Integer num = bytesList.stream().mapToInt(Object::hashCode).sum();
-        return new BigInteger(String.valueOf(num));
+        int sum = getSum(bytes);
+        return new BigInteger(String.valueOf(sum));
+    }
+
+    private int getSum(byte[] bytes) {
+        int sum = 0;
+        for (byte aByte : bytes) sum += (int) aByte;
+        return sum;
     }
 }

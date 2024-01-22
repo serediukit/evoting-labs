@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -21,6 +22,7 @@ public class Voter {
     private static List<byte[]> encodedMessages = new ArrayList<>();
     private List<byte[]> encodedBytes = new ArrayList<>();
     private static List<Ballot> ballots = new ArrayList<>();
+    private List<Ballot> tempBallots = new ArrayList<>();
 
     public Voter(String name) {
         this.name = name;
@@ -53,7 +55,9 @@ public class Voter {
     }
 
     public void encryptBallot(List<Voter> voters) {
-        String ballotString = ballot.getData() + getRandomString(4);
+        String randomString = getRandomString(4);
+        randomStrings.add(randomString);
+        String ballotString = ballot.getData() + randomString;
         message = ballotString;
         ballots.add(ballot);
         byte[] firstStageOfEncrypting = encryptFirstStage(ballotString);
@@ -105,12 +109,13 @@ public class Voter {
     public void decryptBallots() {
         for (int i = 0; i < encodedMessages.size(); i++) {
             String decryptedMessage = RSA.decrypt(encodedMessages.get(i), keyPair.getPrivate());
-            randomStrings.remove(0);
             String removed = decryptedMessage.substring(0, decryptedMessage.length() - 4);
             byte[] encrypted = RSA.encrypt(removed, keyPair.getPublic());
-            encodedMessages.remove(i);
-            encodedMessages.add(i, encrypted);
+            encodedMessages.set(i, encrypted);
+//            encodedMessages.set(i, removed.getBytes(StandardCharsets.UTF_8));
         }
+        if (randomStrings.size() > 1)
+            randomStrings.remove(randomStrings.size() - 1);
     }
 
     public void shuffleBallots() {
@@ -119,7 +124,31 @@ public class Voter {
     }
 
     public void sign() {
-        long[] signature = ElGamal.sign(ballot.getData());
+        for (Ballot ballot : ballots) {
+            BigInteger[] signature = elGamal.sign(ballot.getData());
+            ballot.addSignature(signature);
+        }
 //        long[] signature = ElGamal.sign(encodedMessages.get(id));
+    }
+
+    public void sendBallots(Voter voter) {
+        voter.setTempBallots(ballots);
+    }
+
+    private void setTempBallots(List<Ballot> tempBallots) {
+        this.tempBallots = new ArrayList<>(tempBallots);
+    }
+
+    public void verifySign() {
+        for (Ballot ballot : ballots) {
+            if (!elGamal.verify(ballot.getData(), ballot.getSignatures())) {
+                System.out.println("Ballot " + ballot.getData() + " is not verified!");
+            }
+            ballot.removeSign();
+        }
+    }
+
+    public List<Ballot> getBallots() {
+        return ballots;
     }
 }
