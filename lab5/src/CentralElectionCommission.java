@@ -44,10 +44,15 @@ public class CentralElectionCommission {
                 String decryptedData = RSA.decrypt(dataToDecrypt, keyPair.getPrivate());
                 Candidate candidate = findCandidate(decryptedData);
                 if (candidate != null) {
-                    votes.put(message.voterId, dataToDecrypt);
-                    candidate.incrementVotes();
+                    if (Objects.requireNonNull(findVoter(message.voterId)).canVote) {
+                        votes.put(message.voterId, dataToDecrypt);
+                        candidate.incrementVotes();
+                    }
+                    else {
+                        System.out.printf("The voter with id %d can't vote\n", message.voterId);
+                    }
                 } else {
-                    System.out.println("Candidate not found");
+                    System.out.printf("Candidate %s not found\n", decryptedData);
                 }
             } else {
                 System.out.println("Voter send only one part");
@@ -68,6 +73,15 @@ public class CentralElectionCommission {
         for (Candidate candidate : candidates) {
             if (candidate.getId() == Integer.parseInt(data)) {
                 return candidate;
+            }
+        }
+        return null;
+    }
+
+    private Voter findVoter(int id) {
+        for (Voter voter : voters) {
+            if (voter.getId() == id) {
+                return voter;
             }
         }
         return null;

@@ -9,6 +9,8 @@ public class Voter {
     private VoteMessage[] voteMessages;
     private KeyPair keyPair;
 
+    public boolean canVote = true;
+
     public Voter(String name) {
         this.name = name;
         ballots = new Ballot[2];

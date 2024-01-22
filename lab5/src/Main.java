@@ -12,6 +12,8 @@ public class Main {
         ElectionCommission electionCommissionA = new ElectionCommission();
         ElectionCommission electionCommissionB = new ElectionCommission();
 
+//        voters.get(1).canVote = false;
+
         for (int i = 0; i < votes.length; i++) {
             voters.get(i).createBallots(candidates.get(votes[i]).getId());
             voters.get(i).encryptBallots(centralElectionCommission.getPublicKey());
@@ -20,6 +22,16 @@ public class Main {
             VoteMessage[] voteMessages = voters.get(i).getVoteMessages();
             electionCommissionA.sendVoteMessage(voteMessages[0]);
             electionCommissionB.sendVoteMessage(voteMessages[1]);
+
+//            if (i == 2) {
+//                voters.get(i).createBallots(candidates.get(0).getId());
+//                voters.get(i).encryptBallots(centralElectionCommission.getPublicKey());
+//                voters.get(i).createVoteMessages();
+//                voters.get(i).signMessages();
+//                voteMessages = voters.get(i).getVoteMessages();
+//                electionCommissionA.sendVoteMessage(voteMessages[0]);
+//                electionCommissionB.sendVoteMessage(voteMessages[1]);
+//            }
         }
 
         centralElectionCommission.sendVotesListFromElectionCommissions(
