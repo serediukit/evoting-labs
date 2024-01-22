@@ -1,0 +1,73 @@
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class Voter {
+    private static int examples = 0;
+    private int id;
+    private String name;
+    private KeyPair keyPair;
+    private Ballot ballot;
+    private static List<String> randomStrings = new ArrayList<>();
+    private String message;
+    private String encodedMessage;
+    private static List<byte[]> encodedMessages = new ArrayList<>();
+    private List<byte[]> encodedBytes = new ArrayList<>();
+    private static List<Ballot> ballots = new ArrayList<>();
+
+    public Voter(String name) {
+        this.name = name;
+        id = examples;
+        examples++;
+        generateKeys();
+    }
+
+    private void generateKeys() {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(1024);
+            keyPair = keyPairGenerator.generateKeyPair();
+        } catch (Exception e) {
+            System.out.println("Failed to generate keys:\n" + e.getMessage());
+        }
+    }
+
+    public PublicKey getPublicKey() {
+        return keyPair.getPublic();
+    }
+
+    public void createBallot(int candidateId) {
+        ballot = new Ballot(id, candidateId);
+    }
+
+    public void encryptBallot(List<Voter> voters) {
+        String ballotString = ballot.getData() + getRandomString(4);
+        message = ballotString;
+        ballots.add(ballot);
+        byte[] firstStageOfEncrypting = encryptFirstStage(ballotString);
+        byte[] secondStageOfEncrypting = encryptSecondStage(new String(firstStageOfEncrypting, StandardCharsets.UTF_8));
+        encodedMessage = new String(secondStageOfEncrypting, StandardCharsets.UTF_8);
+        encodedMessages.add(secondStageOfEncrypting);
+    }
+
+    private String getRandomString(int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++)
+            sb.append(Util.getRandomChar());
+        return sb.toString();
+    }
+
+    private byte[] encryptFirstStage(String data) {
+        byte[] res = data.getBytes();
+        List<PublicKey> keys = PublicKeys.getPublicKeys();
+        for (int i = 0; i < keys.size(); i++) {
+            res = RSA.encrypt(new String(res, StandardCharsets.UTF_8), keys.get(keys.size() - i - 1));
+            encodedBytes.add(res);
+        }
+        return res;
+    }
+}
