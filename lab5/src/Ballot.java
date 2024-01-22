@@ -2,7 +2,7 @@ public class Ballot {
     private String data;
 
     public Ballot(String data) {
-        this.data = "vote for " + data;
+        this.data = data;
     }
 
     public String getData() {

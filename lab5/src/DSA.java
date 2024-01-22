@@ -2,27 +2,11 @@ import java.math.BigInteger;
 import java.security.*;
 
 public class DSA {
-    private KeyPair keyPair;
-
-    public DSA() {
-        generateKeyPair();
-    }
-
-    private void generateKeyPair() {
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-            keyGen.initialize(2048);
-            keyPair = keyGen.generateKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public byte[] sign(BigInteger msg) {
+    public static byte[] sign(BigInteger msg, PrivateKey privateKey) {
         byte[] message = String.valueOf(msg).getBytes();
         try {
             Signature dsa = Signature.getInstance("SHA256withDSA");
-            dsa.initSign(keyPair.getPrivate());
+            dsa.initSign(privateKey);
             dsa.update(message);
             return dsa.sign();
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
@@ -31,11 +15,11 @@ public class DSA {
         }
     }
 
-    public boolean verify(BigInteger msg, byte[] signature) {
+    public static boolean verify(BigInteger msg, byte[] signature, PublicKey publicKey) {
         byte[] message = String.valueOf(msg).getBytes();
         try {
             Signature verifyDsa = Signature.getInstance("SHA256withDSA");
-            verifyDsa.initVerify(keyPair.getPublic());
+            verifyDsa.initVerify(publicKey);
             verifyDsa.update(message);
             return verifyDsa.verify(signature);
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {

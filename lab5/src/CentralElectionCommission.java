@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.security.*;
 import java.util.*;
 
@@ -30,5 +31,57 @@ public class CentralElectionCommission {
 
     public PublicKey getPublicKey() {
         return keyPair.getPublic();
+    }
+
+    public void sendVotesListFromElectionCommissions(List<VoteMessage> firstPart, List<VoteMessage> secondPart) {
+        for (VoteMessage message : firstPart) {
+            VoteMessage secondMessage = findMessageById(message.voterId, secondPart);
+            if (secondMessage != null) {
+                BigInteger firstPartId = new BigInteger(message.ballot.getData());
+                BigInteger secondPartId = new BigInteger(secondMessage.ballot.getData());
+                BigInteger data = firstPartId.multiply(secondPartId);
+                String dataToDecrypt = String.valueOf(data);
+                String decryptedData = RSA.decrypt(dataToDecrypt, keyPair.getPrivate());
+                Candidate candidate = findCandidate(decryptedData);
+                if (candidate != null) {
+                    votes.put(message.voterId, dataToDecrypt);
+                    candidate.incrementVotes();
+                } else {
+                    System.out.println("Candidate not found");
+                }
+            } else {
+                System.out.println("Voter send only one part");
+            }
+        }
+    }
+
+    private VoteMessage findMessageById(int id, List<VoteMessage> messages) {
+        for (VoteMessage message : messages) {
+            if (message.voterId == id) {
+                return message;
+            }
+        }
+        return null;
+    }
+
+    private Candidate findCandidate(String data) {
+        for (Candidate candidate : candidates) {
+            if (candidate.getId() == Integer.parseInt(data)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    public void printResult() {
+        System.out.println("\n+------------------+--------------+");
+        System.out.println("|        ELECTION  RESULTS        |");
+        System.out.println("+------------------+--------------+");
+        System.out.println("|    CANDIDATES    |     VOTES    |");
+        System.out.println("+------------------+--------------+");
+        for (Candidate candidate : candidates) {
+            System.out.printf("| %16s | %12d |\n", candidate.getName(), candidate.getVotes());
+        }
+        System.out.println("+------------------+--------------+\n");
     }
 }
