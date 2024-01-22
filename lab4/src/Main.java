@@ -8,6 +8,11 @@ public class Main {
         List<Candidate> candidates = DataFactory.getCandidates();
         List<Voter> voters = DataFactory.getVoters();
 
+        Voter A = voters.get(0);
+        Voter B = voters.get(1);
+        Voter C = voters.get(2);
+        Voter D = voters.get(3);
+
         for (Voter voter : voters) {
             PublicKeys.addPublicKey(voter.getPublicKey());
         }
@@ -19,5 +24,16 @@ public class Main {
         for (Voter voter : voters) {
             voter.encryptBallot(voters);
         }
+
+        for (int i = 1; i < voters.size(); i++) {
+            voters.get(i).sendBallotTo(A);
+        }
+
+        for (Voter voter : voters) {
+            voter.decryptBallots();
+            voter.shuffleBallots();
+        }
+
+        A.sign();
     }
 }
