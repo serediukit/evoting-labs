@@ -29,6 +29,8 @@ public class Main {
             voters.get(i).sendBallotTo(A);
         }
 
+//        RSA.printData();
+
         for (Voter voter : voters) {
             voter.decryptBallots();
             voter.shuffleBallots();
@@ -67,6 +69,10 @@ public class Main {
 
         for (Ballot ballot : D.getBallots()) {
             System.out.println(ballot.getData());
+        }
+
+        for (String data : D.getEncodedMessages()) {
+            System.out.println(data);
         }
     }
 }

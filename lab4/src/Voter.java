@@ -17,12 +17,12 @@ public class Voter {
     private Ballot ballot;
     private static List<String> randomStrings = new ArrayList<>();
     private String message;
-    private static List<String> messages = new ArrayList<>();;
+    private static List<String> messages = new ArrayList<>();
     private String encodedMessage;
     private static List<byte[]> encodedMessages = new ArrayList<>();
     private List<byte[]> encodedBytes = new ArrayList<>();
     private static List<Ballot> ballots = new ArrayList<>();
-    private List<Ballot> tempBallots = new ArrayList<>();
+    private List<Ballot> resBallots = new ArrayList<>();
 
     public Voter(String name) {
         this.name = name;
@@ -112,10 +112,10 @@ public class Voter {
             String removed = decryptedMessage.substring(0, decryptedMessage.length() - 4);
             byte[] encrypted = RSA.encrypt(removed, keyPair.getPublic());
             encodedMessages.set(i, encrypted);
+            if (randomStrings.size() > examples + 1)
+                randomStrings.remove(randomStrings.size() - 1);
 //            encodedMessages.set(i, removed.getBytes(StandardCharsets.UTF_8));
         }
-        if (randomStrings.size() > 1)
-            randomStrings.remove(randomStrings.size() - 1);
     }
 
     public void shuffleBallots() {
@@ -132,11 +132,11 @@ public class Voter {
     }
 
     public void sendBallots(Voter voter) {
-        voter.setTempBallots(ballots);
+        voter.setResBallots(ballots);
     }
 
-    private void setTempBallots(List<Ballot> tempBallots) {
-        this.tempBallots = new ArrayList<>(tempBallots);
+    private void setResBallots(List<Ballot> tempBallots) {
+        this.resBallots = new ArrayList<>(tempBallots);
     }
 
     public void verifySign() {
@@ -149,6 +149,14 @@ public class Voter {
     }
 
     public List<Ballot> getBallots() {
-        return ballots;
+        return resBallots;
+    }
+
+    public List<String> getEncodedMessages() {
+        List<String> res = new ArrayList<String>();
+        for (byte[] encodedMessage : encodedMessages) {
+            res.add(new String(encodedMessage, StandardCharsets.UTF_8));
+        }
+        return res;
     }
 }
