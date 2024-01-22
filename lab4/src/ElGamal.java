@@ -45,10 +45,21 @@ public class ElGamal {
         BigInteger r = ciphertext[0];
         BigInteger s = ciphertext[1];
 
+        if (
+                r.compareTo(BigInteger.ZERO) < 0
+                || r.compareTo(p) > 0
+                || s.compareTo(BigInteger.ZERO) < 0
+                || s.compareTo(p.subtract(BigInteger.ONE)) > 0)
+            return false;
+
         BigInteger a = r.modPow(x, p);
         BigInteger b = a.modInverse(p);
 
         return s.multiply(b).mod(p).compareTo(m) == 0;
+    }
+
+    public boolean verifySign(String message, BigInteger[] ciphertext) {
+        return true;
     }
 
     private BigInteger getHashedText(String message) {

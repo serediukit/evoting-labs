@@ -1,5 +1,3 @@
-import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -68,8 +66,7 @@ public class Main {
         A.verifySign();
         A.deleteFirstRandomString();
 
-        for (String message : A.getMessages()) {
-            System.out.println(message);
-        }
+        System.out.println("ELECTION RESULT");
+        System.out.println(Voter.getResult(candidates));
     }
 }

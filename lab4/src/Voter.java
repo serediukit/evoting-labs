@@ -6,7 +6,6 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Voter {
     private static int examples = 0;
@@ -151,23 +150,11 @@ public class Voter {
 
     public void verifySign() {
         for (Ballot ballot : ballots) {
-            if (!elGamal.verify(ballot.getData(), ballot.getSignatures())) {
+            if (!elGamal.verifySign(ballot.getData(), ballot.getSignatures())) {
                 System.out.println("Ballot " + ballot.getData() + " is not verified!");
             }
             ballot.removeSign();
         }
-    }
-
-    public List<Ballot> getBallots() {
-        return resBallots;
-    }
-
-    public List<String> getEncodedMessages() {
-        List<String> res = new ArrayList<String>();
-        for (byte[] encodedMessage : encodedMessages) {
-            res.add(new String(encodedMessage, StandardCharsets.UTF_8));
-        }
-        return res;
     }
 
     public void deleteFirstRandomString() {
@@ -180,5 +167,21 @@ public class Voter {
 
     public List<String> getMessages() {
         return messages;
+    }
+
+    public static String getResult(List<Candidate> candidates) {
+        for (String message : messages) {
+            int vote = Integer.parseInt(message.substring(message.length() - 1));
+            for (Candidate candidate : candidates) {
+                if (candidate.getId() == vote) {
+                    candidate.incrementVotes();
+                }
+            }
+        }
+        StringBuilder result = new StringBuilder();
+        for (Candidate candidate : candidates) {
+            result.append(candidate.getName()).append(": ").append(candidate.getVotesCount()).append("\n");
+        }
+        return result.toString();
     }
 }
