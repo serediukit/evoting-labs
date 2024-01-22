@@ -15,13 +15,12 @@ public class Voter {
     private ElGamal elGamal;
     private Ballot ballot;
     private static List<String> randomStrings = new ArrayList<>();
-    private String message;
     private static List<String> messages = new ArrayList<>();
-    private String encodedMessage;
     private static List<byte[]> encodedMessages = new ArrayList<>();
     private List<byte[]> encodedBytes = new ArrayList<>();
     private static List<Ballot> ballots = new ArrayList<>();
     private List<Ballot> resBallots = new ArrayList<>();
+    private static List<BigInteger[]> signatures = new ArrayList<>();
 
     public Voter(String name) {
         this.name = name;
@@ -29,6 +28,7 @@ public class Voter {
         examples++;
         generateKeys();
         elGamal = new ElGamal();
+        signatures.addAll(Collections.nCopies(4, new BigInteger[2]));
     }
 
     private void generateKeys() {
@@ -41,10 +41,6 @@ public class Voter {
         }
     }
 
-    public int getId() {
-        return id;
-    }
-
     public PublicKey getPublicKey() {
         return keyPair.getPublic();
     }
@@ -54,20 +50,19 @@ public class Voter {
     }
 
     public void encryptBallot(List<Voter> voters) {
-        String randomString = getRandomString(4);
+        String randomString = getRandomString();
         randomStrings.add(randomString);
         String ballotString = ballot.getData() + randomString;
         messages.add(ballotString);
         ballots.add(ballot);
         byte[] firstStageOfEncrypting = encryptFirstStage(ballotString);
         byte[] secondStageOfEncrypting = encryptSecondStage(new String(firstStageOfEncrypting, StandardCharsets.UTF_8));
-        encodedMessage = new String(secondStageOfEncrypting, StandardCharsets.UTF_8);
         encodedMessages.add(secondStageOfEncrypting);
     }
 
-    private String getRandomString(int length) {
+    private String getRandomString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < 4; i++)
             sb.append(Util.getRandomChar());
         return sb.toString();
     }
@@ -91,7 +86,7 @@ public class Voter {
     }
 
     private byte[] addStringAndEncrypt(String data, PublicKey publicKey) {
-        String randomString = getRandomString(4);
+        String randomString = getRandomString();
         randomStrings.add(randomString);
         byte[] randomStringBytes = randomString.getBytes(StandardCharsets.UTF_8);
         byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
@@ -114,7 +109,6 @@ public class Voter {
             encodedMessages.set(i, encrypted);
             if (randomStrings.size() > examples + 1)
                 randomStrings.remove(randomStrings.size() - 1);
-//            encodedMessages.set(i, removed.getBytes(StandardCharsets.UTF_8));
         }
     }
 
@@ -123,21 +117,18 @@ public class Voter {
             String decryptedMessage = RSA.decrypt(encodedMessages.get(i), keyPair.getPrivate());
             byte[] encrypted = RSA.encrypt(decryptedMessage, keyPair.getPublic());
             encodedMessages.set(i, encrypted);
-//            encodedMessages.set(i, removed.getBytes(StandardCharsets.UTF_8));
         }
     }
 
     public void shuffleBallots() {
-        Collections.shuffle(ballots);
-//        Collections.shuffle(encodedMessages);
+        Collections.shuffle(encodedMessages);
     }
 
     public void sign() {
-        for (Ballot ballot : ballots) {
-            BigInteger[] signature = elGamal.sign(ballot.getData());
-            ballot.addSignature(signature);
+        for (int i = 0; i < encodedMessages.size(); i++) {
+            BigInteger[] signature = elGamal.sign(new String(encodedMessages.get(i), StandardCharsets.UTF_8));
+            signatures.set(i, signature);
         }
-//        long[] signature = ElGamal.sign(encodedMessages.get(id));
     }
 
     public void sendBallots(Voter voter) {
@@ -163,10 +154,6 @@ public class Voter {
             String msg = messages.get(i).substring(0, messages.get(i).length() - 4);
             messages.set(i, msg);
         }
-    }
-
-    public List<String> getMessages() {
-        return messages;
     }
 
     public static String getResult(List<Candidate> candidates) {
