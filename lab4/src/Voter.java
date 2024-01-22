@@ -58,7 +58,7 @@ public class Voter {
         String randomString = getRandomString(4);
         randomStrings.add(randomString);
         String ballotString = ballot.getData() + randomString;
-        message = ballotString;
+        messages.add(ballotString);
         ballots.add(ballot);
         byte[] firstStageOfEncrypting = encryptFirstStage(ballotString);
         byte[] secondStageOfEncrypting = encryptSecondStage(new String(firstStageOfEncrypting, StandardCharsets.UTF_8));
@@ -103,7 +103,8 @@ public class Voter {
     }
 
     public void sendBallotTo(Voter voter) {
-        messages.add(message);
+        if (messages.size() > 4)
+            System.out.println("Message sending error");
     }
 
     public void decryptBallots() {
@@ -114,6 +115,15 @@ public class Voter {
             encodedMessages.set(i, encrypted);
             if (randomStrings.size() > examples + 1)
                 randomStrings.remove(randomStrings.size() - 1);
+//            encodedMessages.set(i, removed.getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    public void decryptBallotsWithOutDeleting() {
+        for (int i = 0; i < encodedMessages.size(); i++) {
+            String decryptedMessage = RSA.decrypt(encodedMessages.get(i), keyPair.getPrivate());
+            byte[] encrypted = RSA.encrypt(decryptedMessage, keyPair.getPublic());
+            encodedMessages.set(i, encrypted);
 //            encodedMessages.set(i, removed.getBytes(StandardCharsets.UTF_8));
         }
     }
@@ -158,5 +168,17 @@ public class Voter {
             res.add(new String(encodedMessage, StandardCharsets.UTF_8));
         }
         return res;
+    }
+
+    public void deleteFirstRandomString() {
+        randomStrings.clear();
+        for (int i = 0; i < encodedMessages.size(); i++) {
+            String msg = messages.get(i).substring(0, messages.get(i).length() - 4);
+            messages.set(i, msg);
+        }
+    }
+
+    public List<String> getMessages() {
+        return messages;
     }
 }

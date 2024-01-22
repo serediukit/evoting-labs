@@ -29,14 +29,12 @@ public class Main {
             voters.get(i).sendBallotTo(A);
         }
 
-//        RSA.printData();
-
         for (Voter voter : voters) {
             voter.decryptBallots();
             voter.shuffleBallots();
         }
 
-        A.decryptBallots();
+        A.decryptBallotsWithOutDeleting();
         A.sign();
         A.shuffleBallots();
         A.sendBallots(B);
@@ -44,7 +42,7 @@ public class Main {
         A.sendBallots(D);
 
         B.verifySign();
-        B.decryptBallots();
+        B.decryptBallotsWithOutDeleting();
         B.sign();
         B.shuffleBallots();
         B.sendBallots(A);
@@ -52,7 +50,7 @@ public class Main {
         B.sendBallots(D);
 
         C.verifySign();
-        C.decryptBallots();
+        C.decryptBallotsWithOutDeleting();
         C.sign();
         C.shuffleBallots();
         C.sendBallots(A);
@@ -60,19 +58,18 @@ public class Main {
         C.sendBallots(D);
 
         D.verifySign();
-        D.decryptBallots();
+        D.decryptBallotsWithOutDeleting();
         D.sign();
         D.shuffleBallots();
         D.sendBallots(A);
         D.sendBallots(B);
         D.sendBallots(C);
 
-        for (Ballot ballot : D.getBallots()) {
-            System.out.println(ballot.getData());
-        }
+        A.verifySign();
+        A.deleteFirstRandomString();
 
-        for (String data : D.getEncodedMessages()) {
-            System.out.println(data);
+        for (String message : A.getMessages()) {
+            System.out.println(message);
         }
     }
 }
