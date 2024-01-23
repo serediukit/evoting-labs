@@ -7,10 +7,12 @@ public class Main {
 
         ElectionCommission electionCommission = new ElectionCommission();
         electionCommission.setCandidates(candidates);
-        Program.electionCommission = electionCommission;
         RegistrationOffice registrationOffice = new RegistrationOffice(electionCommission);
         registrationOffice.generateId(voters.size());
         voters.forEach(registrationOffice::register);
+
+        Program.electionCommission = electionCommission;
+        Program.registrationOffice = registrationOffice;
 
         for (Voter voter : voters) {
             voter.install();

@@ -2,15 +2,15 @@ import java.nio.charset.StandardCharsets;
 
 public class Program {
     public static ElectionCommission electionCommission;
-    private Credentials credentials;
+    public static RegistrationOffice registrationOffice;
     private Token token;
 
-    public void setCredentials(Credentials credentials) {
-        this.credentials = credentials;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
+    public Program(Credentials credentials, Token token) {
+        if (registrationOffice.checkCredentials(credentials)) {
+            this.token = token;
+        } else {
+            System.out.println("Incorrect credentials");
+        }
     }
 
     public void vote(Candidate candidate) {

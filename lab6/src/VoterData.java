@@ -6,4 +6,9 @@ public class VoterData {
         this.credentials = credentials;
         this.tokenId = tokenId;
     }
+
+    public boolean checkCredentials(Credentials credentials) {
+        return credentials.login.equals(this.credentials.login)
+                && credentials.password.equals(this.credentials.password);
+    }
 }

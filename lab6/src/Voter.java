@@ -14,9 +14,7 @@ public class Voter {
     }
 
     public void install() {
-        program = new Program();
-        program.setCredentials(credentials);
-        program.setToken(token);
+        program = new Program(credentials, token);
     }
 
     public void vote(Candidate candidate) {

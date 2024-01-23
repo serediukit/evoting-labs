@@ -30,4 +30,13 @@ public class RegistrationOffice {
         voter.setCredentialsAndToken(credentials, tokens.get(tokenIndex));
         tokenIndex++;
     }
+
+    public boolean checkCredentials(Credentials credentials) {
+        for (VoterData vd : voterData) {
+            if (vd.checkCredentials(credentials)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
