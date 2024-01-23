@@ -7,8 +7,16 @@ public class Main {
 
         ElectionCommission electionCommission = new ElectionCommission();
         electionCommission.setCandidates(candidates);
+        Program.electionCommission = electionCommission;
         RegistrationOffice registrationOffice = new RegistrationOffice(electionCommission);
         registrationOffice.generateId(voters.size());
-        voters.forEach(voter -> registrationOffice.register(voter));
+        voters.forEach(registrationOffice::register);
+
+        for (Voter voter : voters) {
+            voter.install();
+            voter.vote(candidates.get((int) (Math.random() * candidates.size())));
+        }
+
+        electionCommission.printResult();
     }
 }
