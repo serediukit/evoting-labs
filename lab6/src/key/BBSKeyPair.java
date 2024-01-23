@@ -1,3 +1,5 @@
+package key;
+
 public class BBSKeyPair {
     public final BBSPrivateKey privateKey;
     public final BBSPublicKey publicKey;

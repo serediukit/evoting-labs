@@ -1,3 +1,5 @@
+import utils.Credentials;
+
 public class Voter {
     private String name;
     private Credentials credentials;

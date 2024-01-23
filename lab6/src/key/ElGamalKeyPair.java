@@ -1,3 +1,5 @@
+package key;
+
 public class ElGamalKeyPair {
     public final ElGamalPrivateKey privateKey;
     public final ElGamalPublicKey publicKey;

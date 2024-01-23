@@ -1,3 +1,6 @@
+import utils.Credentials;
+import utils.VoterData;
+
 import java.util.*;
 
 public class RegistrationOffice {

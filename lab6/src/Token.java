@@ -1,3 +1,6 @@
+import key.BBSPublicKey;
+import key.ElGamalPublicKey;
+
 public class Token {
     public final int voterId;
     public final ElGamalPublicKey elGamalPublicKey;

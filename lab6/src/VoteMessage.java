@@ -1,5 +1,6 @@
+import utils.BBSResult;
+
 import java.math.BigInteger;
-import java.util.Arrays;
 
 public class VoteMessage {
     public BigInteger[] encryptedMessage;

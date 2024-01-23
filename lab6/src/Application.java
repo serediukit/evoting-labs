@@ -1,3 +1,6 @@
+import utils.BBSResult;
+import utils.Credentials;
+
 import java.math.BigInteger;
 
 public class Application {

@@ -1,3 +1,6 @@
+import key.ElGamalPrivateKey;
+import key.ElGamalPublicKey;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 

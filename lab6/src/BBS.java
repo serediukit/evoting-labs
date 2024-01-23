@@ -1,3 +1,7 @@
+import key.BBSPrivateKey;
+import key.BBSPublicKey;
+import utils.BBSResult;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
