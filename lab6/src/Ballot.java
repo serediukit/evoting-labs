@@ -1,9 +1,11 @@
+import java.math.BigInteger;
+
 public class Ballot {
-    public byte[] encryptedBytes;
+    public BigInteger[] encryptedMessage;
     public int voterId;
 
-    public Ballot(byte[] encryptedBytes, int voterId) {
-        this.encryptedBytes = encryptedBytes;
+    public Ballot(BigInteger[] encryptedMessage, int voterId) {
+        this.encryptedMessage = encryptedMessage;
         this.voterId = voterId;
     }
 }

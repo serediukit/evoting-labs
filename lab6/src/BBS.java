@@ -44,7 +44,7 @@ public class BBS {
         return bits;
     }
 
-    public static BBSResult encrypt(String str, PublicKey publicKey){
+    public static BBSResult encrypt(String str, BBSPublicKey publicKey){
         BigInteger n = publicKey.n;
         BigInteger x = generateX(n);
         BigInteger x0 = squareModN(x, n);
@@ -60,7 +60,7 @@ public class BBS {
         return new BBSResult(encryptedBits, x0);
     }
 
-    public static String decrypt(BigInteger[] bits, BigInteger x0, PrivateKey privateKey) {
+    public static String decrypt(BigInteger[] bits, BigInteger x0, BBSPrivateKey privateKey) {
         BigInteger p = privateKey.p;
         BigInteger q = privateKey.q;
         BigInteger n = p.multiply(q);

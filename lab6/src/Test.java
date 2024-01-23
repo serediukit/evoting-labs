@@ -1,11 +1,12 @@
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) {
-        KeyPair keyPair = KeyPairGenerator.generateKeyPair();
+        ElGamalKeyPair keyPair = KeyPairGenerator.generateElGamalKeyPair();
         String data = "23532";
-        BBSResult result = ElGamal.encrypt(data, keyPair.publicKey);
-        String decrypted = ElGamal.decrypt(result.encryptedMessage, result.x0, keyPair.privateKey);
+        BigInteger[] result = ElGamal.encrypt(new BigInteger(data), keyPair.publicKey);
+        String decrypted = String.valueOf(ElGamal.decrypt(result, keyPair.privateKey));
         System.out.println(decrypted);
     }
 }

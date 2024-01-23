@@ -22,6 +22,10 @@ public class RegistrationOffice {
     }
 
     public void register(Voter voter) {
+        if (!voter.canVote) {
+            System.out.println("The voter can't vote");
+            return;
+        }
         Random random = new Random();
         String login = String.valueOf(random.nextInt());
         String password = String.valueOf(random.nextInt());

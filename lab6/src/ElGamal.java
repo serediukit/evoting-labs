@@ -2,7 +2,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 public class ElGamal {
-    public BigInteger[] encrypt(BigInteger plaintext, PublicKey publicKey) {
+    public static BigInteger[] encrypt(BigInteger plaintext, ElGamalPublicKey publicKey) {
         BigInteger g = publicKey.g;
         BigInteger p = publicKey.p;
         BigInteger y = publicKey.y;
@@ -16,8 +16,8 @@ public class ElGamal {
         return new BigInteger[]{a, b};
     }
 
-    public BigInteger decrypt(BigInteger[] ciphertext, PrivateKey privateKey) {
-        BigInteger p = privateKey.elp;
+    public static BigInteger decrypt(BigInteger[] ciphertext, ElGamalPrivateKey privateKey) {
+        BigInteger p = privateKey.p;
         BigInteger x = privateKey.x;
 
         BigInteger a = ciphertext[0];

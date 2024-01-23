@@ -11,14 +11,14 @@ public class Main {
         registrationOffice.generateId(voters.size());
         voters.forEach(registrationOffice::register);
 
-        Program.electionCommission = electionCommission;
-        Program.registrationOffice = registrationOffice;
+        Application.electionCommission = electionCommission;
+        Application.registrationOffice = registrationOffice;
 
         for (Voter voter : voters) {
             voter.install();
             voter.vote(candidates.get((int) (Math.random() * candidates.size())));
         }
 
-//        electionCommission.printResult();
+        electionCommission.printResult();
     }
 }

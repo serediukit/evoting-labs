@@ -2,7 +2,9 @@ public class Voter {
     private String name;
     private Credentials credentials;
     private Token token;
-    private Program program;
+    private Application application;
+
+    public boolean canVote = true;
 
     public Voter(String name) {
         this.name = name;
@@ -14,10 +16,10 @@ public class Voter {
     }
 
     public void install() {
-        program = new Program(credentials, token);
+        application = new Application(credentials, token);
     }
 
     public void vote(Candidate candidate) {
-        program.vote(candidate);
+        application.vote(candidate);
     }
 }

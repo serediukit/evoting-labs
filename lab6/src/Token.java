@@ -1,17 +1,20 @@
 public class Token {
     public final int voterId;
-    public final PublicKey publicKey;
+    public final ElGamalPublicKey elGamalPublicKey;
+    public final BBSPublicKey bbsPublicKey;
 
-    public Token(int voterId, PublicKey publicKey) {
+    public Token(int voterId, ElGamalPublicKey elGamalPublic, BBSPublicKey bbsPublic) {
         this.voterId = voterId;
-        this.publicKey = publicKey;
+        this.elGamalPublicKey = elGamalPublic;
+        this.bbsPublicKey = bbsPublic;
     }
 
     @Override
     public String toString() {
         return "Token{" +
                 "voterId=" + voterId +
-                ", publicKey=" + publicKey +
+                ", elGamalPublicKey=" + elGamalPublicKey +
+                ", bbsPublicKey=" + bbsPublicKey +
                 "}\n";
     }
 }

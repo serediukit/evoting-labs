@@ -1,12 +1,11 @@
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 
-public class Program {
+public class Application {
     public static ElectionCommission electionCommission;
     public static RegistrationOffice registrationOffice;
     private Token token;
 
-    public Program(Credentials credentials, Token token) {
+    public Application(Credentials credentials, Token token) {
         if (registrationOffice.checkCredentials(credentials)) {
             this.token = token;
         } else {
@@ -15,8 +14,10 @@ public class Program {
     }
 
     public void vote(Candidate candidate) {
-        BBSResult encryptResult = BBS.encrypt(String.valueOf(candidate.getId()), token.publicKey);
+        BBSResult encryptResult = BBS.encrypt(String.valueOf(candidate.getId()), token.bbsPublicKey);
         VoteMessage voteMessage = new VoteMessage(encryptResult, token.voterId);
-
+        BigInteger messageToEncrypt = voteMessage.getMessage();
+        BigInteger[] encrypted = ElGamal.encrypt(messageToEncrypt, token.elGamalPublicKey);
+        electionCommission.sendEncryptedBallot(encrypted);
     }
 }

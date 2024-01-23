@@ -3,13 +3,15 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 public class KeyPairGenerator {
-    public static KeyPair generateKeyPair() {
+    public static BBSKeyPair generateBBSKeyPair() {
         BigInteger[] pq = generatePrime();
         BigInteger n = pq[0].multiply(pq[1]);
+        return new BBSKeyPair(new BBSPrivateKey(pq[0], pq[1]), new BBSPublicKey(n));
+    }
 
-        BigInteger[] eg = generateElGamal();
-
-        return new KeyPair(new PrivateKey(pq[0], pq[1], eg[3], eg[0]), new PublicKey(n, eg[0], eg[1], eg[2]));
+    public static ElGamalKeyPair generateElGamalKeyPair() {
+        BigInteger[] elGamal = generateElGamal();
+        return new ElGamalKeyPair(new ElGamalPrivateKey(elGamal[3], elGamal[0]), new ElGamalPublicKey(elGamal[0],  elGamal[1], elGamal[2]));
     }
 
     private static BigInteger[] generatePrime() {
