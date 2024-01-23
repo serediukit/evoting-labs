@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 public class Program {
@@ -14,8 +15,8 @@ public class Program {
     }
 
     public void vote(Candidate candidate) {
-        byte[] candidateBytes = candidate.toString().getBytes(StandardCharsets.UTF_8);
-        byte[] encryptedBytes = Encryptor.apply(candidateBytes, token.publicKey);
-        electionCommission.sendBallot(new Ballot(encryptedBytes, token.voterId));
+        BBSResult encryptResult = BBS.encrypt(String.valueOf(candidate.getId()), token.publicKey);
+        VoteMessage voteMessage = new VoteMessage(encryptResult, token.voterId);
+
     }
 }

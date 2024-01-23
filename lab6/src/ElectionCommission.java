@@ -33,37 +33,37 @@ public class ElectionCommission {
         ballots.add(ballot);
     }
 
-    public void printResult() {
-        Map<Candidate, Integer> votes = new HashMap<>();
-
-        for (Ballot ballot : ballots) {
-            PrivateKey privateKey = voterPrivateKeys.get(ballot.voterId);
-
-            byte[] candidateBytes = Encryptor.apply(ballot.encryptedBytes, privateKey);
-            String candidateStr = new String(candidateBytes, StandardCharsets.UTF_8);
-
-            Candidate candidate = candidates
-                    .stream()
-                    .filter(c -> Objects.equals(c.toString(), candidateStr))
-                    .findFirst()
-                    .orElse(null);
-
-            if (votes.containsKey(candidate)) {
-                votes.put(candidate, votes.get(candidate) + 1);
-            } else {
-                votes.put(candidate, 1);
-            }
-        }
-
-        for (Candidate candidate : candidates) {
-            if (!votes.containsKey(candidate)) {
-                votes.put(candidate, 0);
-            }
-        }
-
-        System.out.println("ELECTION RESULTS");
-        for (Candidate candidate : candidates) {
-            System.out.println(candidate + " - " + votes.get(candidate));
-        }
-    }
+//    public void printResult() {
+//        Map<Candidate, Integer> votes = new HashMap<>();
+//
+//        for (Ballot ballot : ballots) {
+//            PrivateKey privateKey = voterPrivateKeys.get(ballot.voterId);
+//
+//            byte[] candidateBytes = Encryptor.apply(ballot.encryptedBytes, privateKey);
+//            String candidateStr = new String(candidateBytes, StandardCharsets.UTF_8);
+//
+//            Candidate candidate = candidates
+//                    .stream()
+//                    .filter(c -> Objects.equals(c.toString(), candidateStr))
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            if (votes.containsKey(candidate)) {
+//                votes.put(candidate, votes.get(candidate) + 1);
+//            } else {
+//                votes.put(candidate, 1);
+//            }
+//        }
+//
+//        for (Candidate candidate : candidates) {
+//            if (!votes.containsKey(candidate)) {
+//                votes.put(candidate, 0);
+//            }
+//        }
+//
+//        System.out.println("ELECTION RESULTS");
+//        for (Candidate candidate : candidates) {
+//            System.out.println(candidate + " - " + votes.get(candidate));
+//        }
+//    }
 }

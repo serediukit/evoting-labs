@@ -19,6 +19,6 @@ public class Main {
             voter.vote(candidates.get((int) (Math.random() * candidates.size())));
         }
 
-        electionCommission.printResult();
+//        electionCommission.printResult();
     }
 }
