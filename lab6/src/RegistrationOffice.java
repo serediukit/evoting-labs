@@ -7,13 +7,13 @@ public class RegistrationOffice {
     private ElectionCommission electionCommission;
     private List<Integer> voterIds;
     private List<Token> tokens;
-    private List<VoterData> voterData;
+    private Map<Voter, VoterData> voterData;
     private static int tokenIndex = 0;
 
     public RegistrationOffice(ElectionCommission electionCommission) {
         this.electionCommission = electionCommission;
         voterIds = new ArrayList<>();
-        voterData = new ArrayList<>();
+        voterData = new HashMap<>();
     }
 
     public void generateId(int amount) {
@@ -26,20 +26,24 @@ public class RegistrationOffice {
 
     public void register(Voter voter) {
         if (!voter.canVote) {
-            System.out.println("The voter can't vote");
+            System.out.printf("The voter %s can't vote\n", voter.getName());
+            return;
+        }
+        if (voterData.containsKey(voter)) {
+            System.out.printf("The voter %s has already registered\n", voter.getName());
             return;
         }
         Random random = new Random();
         String login = String.valueOf(random.nextInt());
         String password = String.valueOf(random.nextInt());
         Credentials credentials = new Credentials(login, password);
-        voterData.add(new VoterData(credentials, tokens.get(tokenIndex).voterId));
+        voterData.put(voter, new VoterData(credentials, tokens.get(tokenIndex).voterId));
         voter.setCredentialsAndToken(credentials, tokens.get(tokenIndex));
         tokenIndex++;
     }
 
     public boolean checkCredentials(Credentials credentials) {
-        for (VoterData vd : voterData) {
+        for (VoterData vd : voterData.values()) {
             if (vd.checkCredentials(credentials)) {
                 return true;
             }

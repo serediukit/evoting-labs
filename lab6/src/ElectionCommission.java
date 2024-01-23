@@ -42,8 +42,14 @@ public class ElectionCommission {
         String ballotData = BBS.decrypt(voteMessage.encryptedMessage, voteMessage.x0, voterPrivateKeys.get(voteMessage.id));
         Candidate candidate = candidates.stream().filter(c -> c.getId() == Integer.parseInt(ballotData)).findFirst().orElse(null);
         if (candidate != null) {
-            ballots.add(new Ballot(voteMessage.encryptedMessage, voteMessage.id));
-            candidate.incrementVotes();
+            if (!isVoterVotedBefore(voteMessage.id)) {
+                ballots.add(new Ballot(voteMessage.encryptedMessage, voteMessage.id));
+                candidate.incrementVotes();
+            } else {
+                System.out.printf("The voter with id %d has already voted\n", voteMessage.id);
+            }
+        } else {
+            System.out.println("The candidate doesn't exist");
         }
     }
 
@@ -60,6 +66,14 @@ public class ElectionCommission {
             decryptedInteger = decryptedInteger.divide(new BigInteger("100"));
         }
         return new VoteMessage(new BBSResult(encryptedMessage, x0), id.intValue());
+    }
+
+    private boolean isVoterVotedBefore(int voterId) {
+        for (Ballot ballot : ballots) {
+            if (ballot.voterId == voterId)
+                return true;
+        }
+        return false;
     }
 
     public void printResult() {

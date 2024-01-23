@@ -10,6 +10,8 @@ public class VoterData {
     }
 
     public boolean checkCredentials(Credentials credentials) {
+        if (credentials == null)
+            return false;
         return credentials.login.equals(this.credentials.login)
                 && credentials.password.equals(this.credentials.password);
     }

@@ -4,6 +4,7 @@ public class Main {
     public static void main(String[] args) {
         List<Candidate> candidates = DataFactory.getCandidates(4);
         List<Voter> voters = DataFactory.getVoters(10);
+//        voters.get(4).canVote = false;
 
         ElectionCommission electionCommission = new ElectionCommission();
         electionCommission.setCandidates(candidates);
@@ -17,6 +18,9 @@ public class Main {
         for (Voter voter : voters) {
             voter.install();
             voter.vote(candidates.get((int) (Math.random() * candidates.size())));
+            if (voters.indexOf(voter) == 3) {
+                voter.vote(candidates.get((int) (Math.random() * candidates.size())));
+            }
         }
 
         electionCommission.printResult();
